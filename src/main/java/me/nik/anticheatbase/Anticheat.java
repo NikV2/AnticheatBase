@@ -25,6 +25,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
+
 /**
  * A simple and very efficient anticheat base
  *
@@ -38,87 +40,53 @@ public class Anticheat extends JavaPlugin {
     private Checks checks;
     private Lang lang;
 
-    private ProfileManager profileManager;
-    private LogManager logManager;
-    private ThreadManager threadManager;
-    private AlertManager alertManager;
-    private CheckManager checkManager;
-    private NmsManager nmsManager;
+    private final ProfileManager profileManager = new ProfileManager();
+
+    private final LogManager logManager = new LogManager(this);
+    private final ThreadManager threadManager = new ThreadManager(this);
+
+    // Might error for registering before enabled, doubt it.
+    private final AlertManager alertManager = new AlertManager(this);
+    private final CheckManager checkManager = new CheckManager();
+    private final NmsManager nmsManager = new NmsManager();
 
     @Override
     public void onEnable() {
-
         instance = this;
 
-        //Files
-        loadFiles();
-
-        //General
-        load();
+        // Configuration Files
+        (this.configuration = new Config(this)).setup();
+        (this.checks = new Checks(this)).setup();
+        (this.lang = new Lang(this)).setup();
 
         //Tasks
         loadTasks();
 
-        //Listeners
-        loadListeners();
+        //Packet Listener
+        ProtocolLibrary.getProtocolManager().addPacketListener(new NetworkListener(this));
+
+        // Bukkit Listeners
+        Arrays.asList(
+                new ProfileListener(this),
+                new ClientListener(this),
+                new ViolationListener(this),
+                new BukkitListener(this)
+        ).forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
 
         //Load Commands
         getCommand("anticheat").setExecutor(new CommandManager(this));
     }
 
-    private void loadFiles() {
-
-        //Config
-        this.configuration = new Config(this);
-        this.configuration.setup();
-
-        //Checks
-        this.checks = new Checks(this);
-        this.checks.setup();
-
-        //Language
-        this.lang = new Lang(this);
-        this.lang.setup();
-    }
-
-    private void load() {
-
-        this.profileManager = new ProfileManager();
-        this.checkManager = new CheckManager();
-        this.logManager = new LogManager(this);
-        this.threadManager = new ThreadManager(this);
-        this.alertManager = new AlertManager(this);
-        this.nmsManager = new NmsManager();
-    }
-
     private void loadTasks() {
-
         new TickTask(this).runTaskTimerAsynchronously(this, 50L, 0L);
 
         if (Config.Setting.LOGS_ENABLED.getBoolean()) {
-
             new LogsTask(this).runTaskTimerAsynchronously(this, 1200L, 320L);
         }
 
         final long violationInterval = Config.Setting.CHECK_SETTINGS_VIOLATION_RESET_INTERVAL.getLong() * 1200;
 
         new ViolationTask(this).runTaskTimerAsynchronously(this, violationInterval, violationInterval);
-    }
-
-    private void loadListeners() {
-
-        final PluginManager pm = getServer().getPluginManager();
-
-        //Bukkit Events
-        pm.registerEvents(new ProfileListener(this), this);
-        pm.registerEvents(new ClientListener(this), this);
-        pm.registerEvents(new ViolationListener(this), this);
-
-        //Packet Listener
-        ProtocolLibrary.getProtocolManager().addPacketListener(new NetworkListener(this));
-
-        //Bukkit Listener
-        pm.registerEvents(new BukkitListener(this), this);
     }
 
     @Override

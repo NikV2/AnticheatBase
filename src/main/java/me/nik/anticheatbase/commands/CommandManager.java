@@ -27,50 +27,37 @@ public class CommandManager implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
         if (args.length > 0) {
-
             for (SubCommand subCommand : this.subCommands) {
-
                 if (args[0].equalsIgnoreCase(subCommand.getName())) {
-
                     if (!subCommand.canConsoleExecute() && sender instanceof ConsoleCommandSender) {
-
                         sender.sendMessage(MsgType.CONSOLE_COMMANDS.getMessage());
-
                         return true;
                     }
 
                     if (!sender.hasPermission(subCommand.getPermission())) {
-
                         sender.sendMessage(MsgType.NO_PERMISSION.getMessage());
-
                         return true;
                     }
 
                     subCommand.perform(sender, args);
-
                     return true;
                 }
 
                 if (args[0].equalsIgnoreCase("help")) {
-
                     helpMessage(sender);
-
                     return true;
                 }
             }
         }
 
         helpMessage(sender);
-
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-
             return this.subCommands.stream().map(SubCommand::getName).collect(Collectors.toList());
         }
 
