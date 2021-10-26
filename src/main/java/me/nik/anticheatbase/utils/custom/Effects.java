@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.manager.impl.custom;
+package me.nik.anticheatbase.utils.custom;
 
 import me.nik.anticheatbase.utils.MathUtils;
 import me.nik.anticheatbase.utils.ServerUtils;

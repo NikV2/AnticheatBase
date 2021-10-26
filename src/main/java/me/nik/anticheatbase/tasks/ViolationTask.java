@@ -28,7 +28,7 @@ public class ViolationTask extends BukkitRunnable {
             //Can happen
             if (checks.isEmpty()) continue;
 
-            profile.getAllChecks().forEach(Check::resetVl);
+            checks.forEach(Check::resetVl);
         }
     }
 }

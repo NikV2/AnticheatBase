@@ -2,6 +2,7 @@ package me.nik.anticheatbase.files;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.files.commentedfiles.CommentedFileConfiguration;
+import me.nik.anticheatbase.manager.Initializer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Checks {
+public class Checks implements Initializer {
 
     private static final String[] HEADER = new String[]{
             "+----------------------------------------------------------------------------------------------+",
@@ -32,7 +33,15 @@ public class Checks {
         this.plugin = plugin;
     }
 
-    public void setup() {
+    /**
+     * @return the config.yml as a CommentedFileConfiguration
+     */
+    public CommentedFileConfiguration getConfig() {
+        return this.configuration;
+    }
+
+    @Override
+    public void init() {
 
         File configFile = new File(this.plugin.getDataFolder(), "checks.yml");
 
@@ -56,15 +65,9 @@ public class Checks {
         if (changed) this.configuration.save();
     }
 
-    public void reset() {
+    @Override
+    public void shutdown() {
         for (Setting setting : Setting.values()) setting.reset();
-    }
-
-    /**
-     * @return the config.yml as a CommentedFileConfiguration
-     */
-    public CommentedFileConfiguration getConfig() {
-        return this.configuration;
     }
 
     public enum Setting {

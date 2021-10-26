@@ -6,8 +6,8 @@ import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.checks.annotations.Testing;
 import me.nik.anticheatbase.checks.types.BukkitCheck;
 import me.nik.anticheatbase.checks.types.PacketCheck;
+import me.nik.anticheatbase.manager.Initializer;
 import me.nik.anticheatbase.playerdata.Profile;
-import me.nik.anticheatbase.utils.Initializer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -24,7 +24,8 @@ public class CheckManager implements Initializer {
     private final List<Constructor<? extends PacketCheck>> packetCheckConstructors = new ArrayList<>();
     private final List<Constructor<? extends BukkitCheck>> bukkitCheckConstructors = new ArrayList<>();
 
-    public CheckManager() {
+    @Override
+    public void init() {
 
         List<Class<PacketCheck>> packetCheckClasses;
         List<Class<BukkitCheck>> bukkitCheckClasses;
@@ -93,11 +94,6 @@ public class CheckManager implements Initializer {
         }
     }
 
-    @Override
-    public void init() {
-
-    }
-
     public List<BukkitCheck> getBukkitChecks(Profile profile) {
 
         final List<BukkitCheck> checks = new LinkedList<>();
@@ -124,12 +120,15 @@ public class CheckManager implements Initializer {
         final List<PacketCheck> checks = new LinkedList<>();
 
         for (final Constructor<? extends PacketCheck> constructor : this.packetCheckConstructors) {
+
             try {
+
                 final PacketCheck check = constructor.newInstance(profile);
 
                 if (!check.isEnabled()) continue;
 
                 checks.add(check);
+
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 e.printStackTrace();
             }

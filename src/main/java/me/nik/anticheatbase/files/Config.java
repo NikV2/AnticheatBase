@@ -2,14 +2,14 @@ package me.nik.anticheatbase.files;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.files.commentedfiles.CommentedFileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
+import me.nik.anticheatbase.manager.Initializer;
 
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Config {
+public class Config implements Initializer {
 
     private static final String[] HEADER = new String[]{
             "+----------------------------------------------------------------------------------------------+",
@@ -23,15 +23,23 @@ public class Config {
             "+----------------------------------------------------------------------------------------------+"
     };
 
-    private final JavaPlugin plugin;
+    private final Anticheat plugin;
     private CommentedFileConfiguration configuration;
     private static boolean exists;
 
-    public Config(JavaPlugin plugin) {
+    public Config(Anticheat plugin) {
         this.plugin = plugin;
     }
 
-    public void setup() {
+    /**
+     * @return the config.yml as a CommentedFileConfiguration
+     */
+    public CommentedFileConfiguration getConfig() {
+        return this.configuration;
+    }
+
+    @Override
+    public void init() {
 
         File configFile = new File(this.plugin.getDataFolder(), "config.yml");
 
@@ -55,15 +63,9 @@ public class Config {
         if (changed) this.configuration.save();
     }
 
-    public void reset() {
+    @Override
+    public void shutdown() {
         for (Setting setting : Setting.values()) setting.reset();
-    }
-
-    /**
-     * @return the config.yml as a CommentedFileConfiguration
-     */
-    public CommentedFileConfiguration getConfig() {
-        return this.configuration;
     }
 
     public enum Setting {

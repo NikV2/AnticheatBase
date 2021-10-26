@@ -1,19 +1,20 @@
 package me.nik.anticheatbase.files;
 
+import me.nik.anticheatbase.Anticheat;
+import me.nik.anticheatbase.manager.Initializer;
 import me.nik.anticheatbase.utils.MiscUtils;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class Lang {
+public class Lang implements Initializer {
 
-    private final JavaPlugin plugin;
+    private final Anticheat plugin;
     private FileConfiguration data;
 
-    public Lang(JavaPlugin plugin) {
+    public Lang(Anticheat plugin) {
         this.plugin = plugin;
     }
 
@@ -21,7 +22,27 @@ public class Lang {
         return data;
     }
 
-    public void setup() {
+    public void write() {
+        get().addDefault("prefix", "&8「&cAnticheat&8」&7»&r ");
+        get().addDefault("no_perm", "&cYou do not have permission to do that!");
+        get().addDefault("console_commands", "&c&lYou cannot run this command through the console :(");
+        get().addDefault("alert_message", "&7%player% &ffailed &c%check% &fx%vl%");
+        get().addDefault("alert_hover",
+                Arrays.asList(
+                        "&7Description:&r",
+                        "%description%",
+                        "",
+                        "&7Information:&r",
+                        "%information%",
+                        "",
+                        "&7TPS: &r%tps%",
+                        "",
+                        "&fClick to teleport"
+                ));
+    }
+
+    @Override
+    public void init() {
 
         File file = new File(plugin.getDataFolder(), "lang.yml");
 
@@ -46,22 +67,7 @@ public class Lang {
         }
     }
 
-    public void write() {
-        get().addDefault("prefix", "&8「&cAnticheat&8」&7»&r ");
-        get().addDefault("no_perm", "&cYou do not have permission to do that!");
-        get().addDefault("console_commands", "&c&lYou cannot run this command through the console :(");
-        get().addDefault("alert_message", "&7%player% &ffailed &c%check% &fx%vl%");
-        get().addDefault("alert_hover",
-                Arrays.asList(
-                        "&7Description:&r",
-                        "%description%",
-                        "",
-                        "&7Information:&r",
-                        "%information%",
-                        "",
-                        "&7TPS: &r%tps%",
-                        "",
-                        "&fClick to teleport"
-                ));
+    @Override
+    public void shutdown() {
     }
 }

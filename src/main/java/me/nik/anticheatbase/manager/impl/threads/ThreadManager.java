@@ -2,9 +2,9 @@ package me.nik.anticheatbase.manager.impl.threads;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.manager.Manager;
-import me.nik.anticheatbase.manager.impl.custom.exception.AnticheatException;
 import me.nik.anticheatbase.playerdata.Profile;
 import me.nik.anticheatbase.utils.MiscUtils;
+import me.nik.anticheatbase.utils.custom.exception.AnticheatException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,25 +29,28 @@ public class ThreadManager extends Manager<ProfileThread> implements Listener {
 
     @Override
     public void init() {
-
     }
 
     public ProfileThread getAvailableProfileThread() {
+
         ProfileThread profileThread;
 
         //Checks whether we should create a new thread based on the thread limit
         if (size() < MAX_THREADS) {
+
             //Create a new profile thread and set it to our variable in order to use it
             profileThread = new ProfileThread();
 
             //Add our new profile thread to the list in order to use it for future profiles
             add(profileThread);
+
         } else {
+
             //Get an available thread based on the profiles using it, Otherwise grab a random element to avoid issues.
-            profileThread = this.getList()
+            profileThread = getList()
                     .stream()
                     .min(Comparator.comparing(ProfileThread::getProfileCount))
-                    .orElse(MiscUtils.randomElement(this.getList()));
+                    .orElse(MiscUtils.randomElement(getList()));
         }
 
         //Throw an exception if the profile thread is null, Which should be impossible.
@@ -72,7 +75,9 @@ public class ThreadManager extends Manager<ProfileThread> implements Listener {
         Otherwise decrease the counter and return.
         */
         if (profileThread.getProfileCount() > 1) {
+
             profileThread.decrement();
+
             return;
         }
 
@@ -81,7 +86,8 @@ public class ThreadManager extends Manager<ProfileThread> implements Listener {
 
     @Override
     public void shutdown() {
-        this.getList().forEach(ProfileThread::shutdownThread);
+
+        getList().forEach(ProfileThread::shutdownThread);
 
         clear();
     }

@@ -1,21 +1,21 @@
-package me.nik.anticheatbase.manager.impl.custom;
+package me.nik.anticheatbase.utils.custom;
 
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
- * A custom sample list that we'll be using on our checks.
+ * A custom concurrent sample list that we'll be using on our checks.
  */
-public final class SampleList<T> extends LinkedList<T> {
+public final class ConcurrentSampleList<T> extends ConcurrentLinkedDeque<T> {
 
     private final int sampleSize;
     private final boolean update;
 
-    public SampleList(int sampleSize) {
+    public ConcurrentSampleList(int sampleSize) {
         this.sampleSize = sampleSize;
         this.update = false;
     }
 
-    public SampleList(int sampleSize, boolean update) {
+    public ConcurrentSampleList(int sampleSize, boolean update) {
         this.sampleSize = sampleSize;
         this.update = update;
     }
@@ -29,10 +29,6 @@ public final class SampleList<T> extends LinkedList<T> {
         }
 
         return super.add(t);
-    }
-
-    public int getMaxSize() {
-        return sampleSize;
     }
 
     public boolean isCollected() {

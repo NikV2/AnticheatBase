@@ -1,7 +1,6 @@
 package me.nik.anticheatbase;
 
 import com.comphenix.protocol.ProtocolLibrary;
-import lombok.Getter;
 import me.nik.anticheatbase.commands.CommandManager;
 import me.nik.anticheatbase.files.Checks;
 import me.nik.anticheatbase.files.Config;
@@ -13,8 +12,8 @@ import me.nik.anticheatbase.listeners.ViolationListener;
 import me.nik.anticheatbase.manager.impl.AlertManager;
 import me.nik.anticheatbase.manager.impl.CheckManager;
 import me.nik.anticheatbase.manager.impl.logs.LogManager;
-import me.nik.anticheatbase.manager.impl.nms.NmsManager;
 import me.nik.anticheatbase.manager.impl.threads.ThreadManager;
+import me.nik.anticheatbase.nms.NmsManager;
 import me.nik.anticheatbase.playerdata.ProfileManager;
 import me.nik.anticheatbase.processors.listeners.BukkitListener;
 import me.nik.anticheatbase.processors.listeners.NetworkListener;
@@ -32,33 +31,46 @@ import java.util.Arrays;
  *
  * @author Nik
  */
-@Getter
 public class Anticheat extends JavaPlugin {
 
     private static Anticheat instance;
 
-    private final Config configuration = new Config(this);
-    private final Checks checks = new Checks(this);
-    private final Lang lang = new Lang(this);
+    private Config configuration;
+    private Checks checks;
+    private Lang lang;
 
-    private final ProfileManager profileManager = new ProfileManager();
+    private ProfileManager profileManager;
 
-    private final LogManager logManager = new LogManager(this);
-    private final ThreadManager threadManager = new ThreadManager(this);
+    private LogManager logManager;
+    private ThreadManager threadManager;
 
-    // Might error for registering before enabled, doubt it.
-    private final AlertManager alertManager = new AlertManager();
-    private final CheckManager checkManager = new CheckManager();
-    private final NmsManager nmsManager = new NmsManager();
+    private AlertManager alertManager;
+    private CheckManager checkManager;
+    private NmsManager nmsManager;
 
     @Override
     public void onEnable() {
+
         instance = this;
 
-        // Configuration Files
-        configuration.setup();
-        checks.setup();
-        lang.setup();
+        //Setup
+        this.configuration = new Config(this);
+        this.checks = new Checks(this);
+        this.lang = new Lang(this);
+        this.profileManager = new ProfileManager();
+        this.logManager = new LogManager();
+        this.threadManager = new ThreadManager(this);
+        this.alertManager = new AlertManager();
+        this.checkManager = new CheckManager();
+        this.nmsManager = new NmsManager();
+
+        //Initialize
+        this.configuration.init();
+        this.checks.init();
+        this.lang.init();
+        this.profileManager.init();
+        this.logManager.init();
+        this.checkManager.init();
 
         //Tasks
         loadTasks();
@@ -66,7 +78,7 @@ public class Anticheat extends JavaPlugin {
         //Packet Listener
         ProtocolLibrary.getProtocolManager().addPacketListener(new NetworkListener(this));
 
-        // Bukkit Listeners
+        //Bukkit Listeners
         Arrays.asList(
                 new ProfileListener(this),
                 new ClientListener(this),
@@ -79,6 +91,7 @@ public class Anticheat extends JavaPlugin {
     }
 
     private void loadTasks() {
+
         new TickTask(this).runTaskTimerAsynchronously(this, 50L, 0L);
 
         if (Config.Setting.LOGS_ENABLED.getBoolean()) {
@@ -93,11 +106,10 @@ public class Anticheat extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        //Files
-        this.configuration.reset();
-        this.checks.reset();
-
-        // Shutdown all managers
+        //Shutdown all managers
+        this.configuration.shutdown();
+        this.checks.shutdown();
+        this.lang.shutdown();
         this.profileManager.shutdown();
         this.checkManager.shutdown();
         this.alertManager.shutdown();
@@ -119,6 +131,30 @@ public class Anticheat extends JavaPlugin {
 
     public FileConfiguration getLang() {
         return this.lang.get();
+    }
+
+    public ProfileManager getProfileManager() {
+        return profileManager;
+    }
+
+    public LogManager getLogManager() {
+        return logManager;
+    }
+
+    public ThreadManager getThreadManager() {
+        return threadManager;
+    }
+
+    public AlertManager getAlertManager() {
+        return alertManager;
+    }
+
+    public CheckManager getCheckManager() {
+        return checkManager;
+    }
+
+    public NmsManager getNmsManager() {
+        return nmsManager;
     }
 
     public static Anticheat getInstance() {

@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.manager.impl.custom;
+package me.nik.anticheatbase.utils.custom;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

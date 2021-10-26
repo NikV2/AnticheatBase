@@ -17,7 +17,7 @@
 
     <name>AnticheatBase</name>
 
-    <description>A clean anticheat base made by Nik!</description>
+    <description>A clean anticheat base</description>
 
     <repositories>
 
@@ -39,12 +39,6 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.spigotmc</groupId>

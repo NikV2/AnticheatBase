@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.manager.impl.custom.exception;
+package me.nik.anticheatbase.utils.custom.exception;
 
 public class AnticheatException extends RuntimeException {
     public AnticheatException(String message) {

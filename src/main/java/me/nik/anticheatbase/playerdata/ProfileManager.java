@@ -1,5 +1,6 @@
 package me.nik.anticheatbase.playerdata;
 
+import me.nik.anticheatbase.manager.Initializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -10,11 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A profile manager class that we'll use in order to create or get a player profile
  */
-public class ProfileManager {
+public class ProfileManager implements Initializer {
 
     private final Map<UUID, Profile> profiles = new ConcurrentHashMap<>();
 
-    public ProfileManager() {
+    @Override
+    public void init() {
 
         //Plugman
         Bukkit.getOnlinePlayers().forEach(this::createProfile);
@@ -41,6 +43,7 @@ public class ProfileManager {
         return this.profiles;
     }
 
+    @Override
     public void shutdown() {
         this.profiles.clear();
     }

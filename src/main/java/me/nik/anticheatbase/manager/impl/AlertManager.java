@@ -19,7 +19,6 @@ public class AlertManager extends Manager<UUID> implements Listener {
 
     @Override
     public void init() {
-
     }
 
     public void addPlayerToAlerts(UUID uuid) {

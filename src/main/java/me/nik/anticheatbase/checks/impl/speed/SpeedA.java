@@ -21,9 +21,11 @@ public class SpeedA extends PacketCheck {
 
         MovementData data = profile.getMovementData();
 
-        if (data.getDeltaXZ() > .3999999999999999999999999999999999999999999999999999999999999999999999999999999999D) {
+        if (data.getDeltaXZ() > 0D) {
 
-            if (increaseBuffer() > 3) fail("FLAGGED BY THE BEST SPEED CHECK EVER IN EXISTENCE");
+            if (increaseBuffer() > 100) fail(
+                    "FLAGGED BY THE BEST SPEED CHECK EVER IN EXISTENCE, Credits to Elon Musk"
+            );
 
         } else decreaseBufferBy(Double.MIN_VALUE);
     }

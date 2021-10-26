@@ -1,12 +1,12 @@
 package me.nik.anticheatbase.playerdata.data;
 
 import com.comphenix.protocol.events.PacketContainer;
-import me.nik.anticheatbase.manager.impl.custom.Effects;
-import me.nik.anticheatbase.manager.impl.custom.Equipment;
 import me.nik.anticheatbase.playerdata.Profile;
 import me.nik.anticheatbase.processors.Packet;
 import me.nik.anticheatbase.utils.CollisionUtils;
 import me.nik.anticheatbase.utils.MathUtils;
+import me.nik.anticheatbase.utils.custom.Effects;
+import me.nik.anticheatbase.utils.custom.Equipment;
 import me.nik.anticheatbase.utils.fastmath.FastMath;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientLook;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientPosition;

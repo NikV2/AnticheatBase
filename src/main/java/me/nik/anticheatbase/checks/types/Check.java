@@ -50,7 +50,7 @@ public abstract class Check {
         this.description = description;
 
         final CommentedFileConfiguration config = Anticheat.getInstance().getChecks();
-        final String checkName = check.getCheckName().toLowerCase();
+        final String checkName = this.checkName.toLowerCase();
         final String checkType = type.toLowerCase().replace(" ", "_");
 
         boolean isEnabled;
@@ -58,7 +58,8 @@ public abstract class Check {
         if (type.isEmpty()) {
             isEnabled = config.getBoolean(checkName + ".enabled");
         } else {
-            isEnabled = config.getBoolean(checkName + "." + checkType + ".enabled", config.getBoolean(checkName + "." + checkType));
+            isEnabled = config.getBoolean(checkName + "." + checkType + ".enabled",
+                    config.getBoolean(checkName + "." + checkType));
         }
 
         this.enabled = isEnabled;

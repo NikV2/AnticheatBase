@@ -1,9 +1,9 @@
 package me.nik.anticheatbase.manager.impl.logs;
 
+import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.files.Config;
+import me.nik.anticheatbase.manager.Initializer;
 import me.nik.anticheatbase.manager.impl.logs.impl.FileExporter;
-import me.nik.anticheatbase.utils.Initializer;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -12,11 +12,12 @@ public class LogManager implements Initializer {
 
     private final Queue<PlayerLog> logsQueue = new ConcurrentLinkedQueue<>();
 
-    private final LogExporter logExporter;
+    private LogExporter logExporter;
 
     private boolean logging;
 
-    public LogManager(JavaPlugin plugin) {
+    @Override
+    public void init() {
 
         switch (Config.Setting.LOGS_TYPE.getString().toLowerCase()) {
 
@@ -34,17 +35,12 @@ public class LogManager implements Initializer {
 
             default:
 
-                this.logExporter = new FileExporter(plugin);
+                this.logExporter = new FileExporter(Anticheat.getInstance());
 
                 break;
         }
 
         this.logExporter.init();
-    }
-
-    @Override
-    public void init() {
-
     }
 
     public void addLogToQueue(PlayerLog playerLog) {
