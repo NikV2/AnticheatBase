@@ -1,0 +1,12 @@
+name: AnticheatBase
+version: ${project.version}
+main: me.nik.anticheatbase.Anticheat
+api-version: 1.13
+authors: [Nik]
+prefix: Anticheat
+description: ${project.description}
+depend: [ProtocolLib]
+commands:
+  anticheat:
+    description: The main anticheat command!
+    aliases: [ac]
