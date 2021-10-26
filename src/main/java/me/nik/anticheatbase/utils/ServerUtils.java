@@ -4,12 +4,13 @@ import org.bukkit.Bukkit;
 
 /**
  * Ugly and terrible, can be done better.
- *
+ * <p>
  * You may replace it with your own if you're not lazy like me and code this for the sake of having it.
  */
 public final class ServerUtils {
 
-    private ServerUtils(){}
+    private ServerUtils() {
+    }
 
     private static final String VERSION = Bukkit.getVersion();
 
@@ -51,9 +52,7 @@ public final class ServerUtils {
     }
 
     public static boolean areVersions(final String... versions) {
-
         for (String version : versions) {
-
             if (VERSION.contains(version)) return true;
         }
 

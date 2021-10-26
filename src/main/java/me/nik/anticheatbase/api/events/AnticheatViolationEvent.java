@@ -23,7 +23,7 @@ public class AnticheatViolationEvent extends Event implements Cancellable {
      * This event will always be called async, Beware.
      */
     public AnticheatViolationEvent(Player player, String checkName, String description, String type, String information,
-                               int vl, int maxVl, boolean experimental) {
+                                   int vl, int maxVl, boolean experimental) {
         super(true);
         this.player = player;
         this.checkName = checkName;
@@ -97,7 +97,7 @@ public class AnticheatViolationEvent extends Event implements Cancellable {
     }
 
     /**
-     * @return Whether or not the check is in an experimental state
+     * @return Whether the check is in an experimental state
      */
     public boolean isExperimental() {
         return experimental;

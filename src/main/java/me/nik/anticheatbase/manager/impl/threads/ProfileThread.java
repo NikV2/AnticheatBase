@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers.threads;
+package me.nik.anticheatbase.manager.impl.threads;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

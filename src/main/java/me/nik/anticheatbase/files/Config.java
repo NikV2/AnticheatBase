@@ -5,7 +5,6 @@ import me.nik.anticheatbase.files.commentedfiles.CommentedFileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

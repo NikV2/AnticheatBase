@@ -16,7 +16,7 @@ public final class CollisionUtils {
      * An efficient way of getting if the player is against a wall without collisions.
      *
      * @param location The location
-     * @return Whether or not the player is against a wall
+     * @return Whether the player is against a wall
      */
     public static boolean isNearWall(final Location location) {
 

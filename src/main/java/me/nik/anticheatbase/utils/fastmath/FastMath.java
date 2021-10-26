@@ -57,7 +57,7 @@ package me.nik.anticheatbase.utils.fastmath;
  * </ul>
  *
  * @since 2.2
- *
+ * <p>
  * NOTE: This class was taken from Apache, However i did change a few things and made certain methods faster.
  */
 public final class FastMath {
@@ -80,15 +80,22 @@ public final class FastMath {
      * Length of the array of integer exponentials.
      */
     static final int EXP_INT_TABLE_LEN = EXP_INT_TABLE_MAX_INDEX * 2;
-    /** Logarithm table length. */
+    /**
+     * Logarithm table length.
+     */
     static final int LN_MANT_LEN = 1024;
-    /** Exponential fractions table length. */
+    /**
+     * Exponential fractions table length.
+     */
     static final int EXP_FRAC_TABLE_LEN = 1025; // 0, 1/1024, ... 1024/1024
 
-    /** StrictFastMath.log(Double.MAX_VALUE): {@value} */
+    /**
+     * StrictFastMath.log(Double.MAX_VALUE): {@value}
+     */
     private static final double LOG_MAX_VALUE = StrictMath.log(Double.MAX_VALUE);
 
-    /** Indicator for tables initialization.
+    /**
+     * Indicator for tables initialization.
      * <p>
      * This compile-time constant should be set to true only if one explicitly
      * wants to compute the tables at class loading time instead of using the
@@ -97,13 +104,19 @@ public final class FastMath {
      */
     private static final boolean RECOMPUTE_TABLES_AT_RUNTIME = false;
 
-    /** log(2) (high bits). */
+    /**
+     * log(2) (high bits).
+     */
     private static final double LN_2_A = 0.693147063255310059;
 
-    /** log(2) (low bits). */
+    /**
+     * log(2) (low bits).
+     */
     private static final double LN_2_B = 1.17304635250823482e-7;
 
-    /** Coefficients for log, when input 0.99 < x < 1.01. */
+    /**
+     * Coefficients for log, when input 0.99 < x < 1.01.
+     */
     private static final double[][] LN_QUICK_COEF = {
             {1.0, 5.669184079525E-24},
             {-0.25, -0.25},
@@ -116,7 +129,9 @@ public final class FastMath {
             {0.11113807559013367, 9.219544613762692E-9},
     };
 
-    /** Coefficients for log in the range of 1.0 < x < 1.0 + 2^-10. */
+    /**
+     * Coefficients for log in the range of 1.0 < x < 1.0 + 2^-10.
+     */
     private static final double[][] LN_HI_PREC_COEF = {
             {1.0, -6.032174644509064E-23},
             {-0.25, -0.25},
@@ -126,10 +141,14 @@ public final class FastMath {
             {-0.16624879837036133, -2.6033824355191673E-8}
     };
 
-    /** Sine, Cosine, Tangent tables are for 0, 1/8, 2/8, ... 13/8 = PI/2 approx. */
+    /**
+     * Sine, Cosine, Tangent tables are for 0, 1/8, 2/8, ... 13/8 = PI/2 approx.
+     */
     private static final int SINE_TABLE_LEN = 14;
 
-    /** Sine table (high bits). */
+    /**
+     * Sine table (high bits).
+     */
     private static final double[] SINE_TABLE_A =
             {
                     +0.0d,
@@ -147,7 +166,9 @@ public final class FastMath {
                     +0.9974949359893799d,
                     +0.9985313415527344d,
             };
-    /** Sine table (low bits). */
+    /**
+     * Sine table (low bits).
+     */
     private static final double[] SINE_TABLE_B =
             {
                     +0.0d,
@@ -165,7 +186,9 @@ public final class FastMath {
                     +5.0614674548127384E-8d,
                     -1.0129027912496858E-9d,
             };
-    /** Cosine table (high bits). */
+    /**
+     * Cosine table (high bits).
+     */
     private static final double[] COSINE_TABLE_A =
             {
                     +1.0d,
@@ -183,7 +206,9 @@ public final class FastMath {
                     +0.07073719799518585d,
                     -0.05417713522911072d,
             };
-    /** Cosine table (low bits). */
+    /**
+     * Cosine table (low bits).
+     */
     private static final double[] COSINE_TABLE_B =
             {
                     +0.0d,
@@ -201,7 +226,9 @@ public final class FastMath {
                     +3.6725170580355583E-9d,
                     +2.0217439756338078E-10d,
             };
-    /** Tangent table, used by atan() (high bits). */
+    /**
+     * Tangent table, used by atan() (high bits).
+     */
     private static final double[] TANGENT_TABLE_A =
             {
                     +0.0d,
@@ -219,7 +246,9 @@ public final class FastMath {
                     +14.101419448852539d,
                     -18.430862426757812d,
             };
-    /** Tangent table, used by atan() (low bits). */
+    /**
+     * Tangent table, used by atan() (low bits).
+     */
     private static final double[] TANGENT_TABLE_B =
             {
                     +0.0d,
@@ -237,7 +266,9 @@ public final class FastMath {
                     +4.983191803254889E-7d,
                     -3.356118100840571E-7d,
             };
-    /** Bits of 1/(2*pi), need for reducePayneHanek(). */
+    /**
+     * Bits of 1/(2*pi), need for reducePayneHanek().
+     */
     private static final long[] RECIP_2PI = new long[]{
             (0x28be60dbL << 32) | 0x9391054aL,
             (0x7f09d5f4L << 32) | 0x7d4d3770L,
@@ -257,16 +288,21 @@ public final class FastMath {
             (0x5d49eeb1L << 32) | 0xfaf97c5eL,
             (0xcf41ce7dL << 32) | 0xe294a4baL,
             0x9afed7ecL << 32};
-    /** Bits of pi/4, need for reducePayneHanek(). */
+    /**
+     * Bits of pi/4, need for reducePayneHanek().
+     */
     private static final long[] PI_O_4_BITS = new long[]{
             (0xc90fdaa2L << 32) | 0x2168c234L,
             (0xc4c6628bL << 32) | 0x80dc1cd1L};
-    /** Eighths.
+    /**
+     * Eighths.
      * This is used by sinQ, because its faster to do a table lookup than
      * a multiply in this time-critical routine
      */
     private static final double[] EIGHTHS = {0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0, 1.125, 1.25, 1.375, 1.5, 1.625};
-    /** Table of 2^((n+2)/3) */
+    /**
+     * Table of 2^((n+2)/3)
+     */
     private static final double[] CBRTTWO = {0.6299605249474366,
             0.7937005259840998,
             1.0,
@@ -284,53 +320,101 @@ public final class FastMath {
      *  by clearing the low order 30 bits if possible, and then performs the arithmetic
      *  on each half separately.
      */
-    /** Mask used to clear low order 30 bits */
+    /**
+     * Mask used to clear low order 30 bits
+     */
     private static final long MASK_30BITS = -1L - (HEX_40000000 - 1); // 0xFFFFFFFFC0000000L;
-    /** Mask used to clear the non-sign part of an int. */
+    /**
+     * Mask used to clear the non-sign part of an int.
+     */
     private static final int MASK_NON_SIGN_INT = 0x7fffffff;
-    /** Mask used to clear the non-sign part of a long. */
+    /**
+     * Mask used to clear the non-sign part of a long.
+     */
     private static final long MASK_NON_SIGN_LONG = 0x7fffffffffffffffL;
-    /** Mask used to extract exponent from double bits. */
+    /**
+     * Mask used to extract exponent from double bits.
+     */
     private static final long MASK_DOUBLE_EXPONENT = 0x7ff0000000000000L;
-    /** Mask used to extract mantissa from double bits. */
+    /**
+     * Mask used to extract mantissa from double bits.
+     */
     private static final long MASK_DOUBLE_MANTISSA = 0x000fffffffffffffL;
-    /** Mask used to add implicit high order bit for normalized double. */
+    /**
+     * Mask used to add implicit high order bit for normalized double.
+     */
     private static final long IMPLICIT_HIGH_BIT = 0x0010000000000000L;
-    /** 2^52 - double numbers this large must be integral (no fraction) or NaN or Infinite */
+    /**
+     * 2^52 - double numbers this large must be integral (no fraction) or NaN or Infinite
+     */
     private static final double TWO_POWER_52 = 4503599627370496.0;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_3 = 1d / 3d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_5 = 1d / 5d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_7 = 1d / 7d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_9 = 1d / 9d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_11 = 1d / 11d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_13 = 1d / 13d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_15 = 1d / 15d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_17 = 1d / 17d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_3_4 = 3d / 4d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_15_16 = 15d / 16d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_13_14 = 13d / 14d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_11_12 = 11d / 12d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_9_10 = 9d / 10d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_7_8 = 7d / 8d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_5_6 = 5d / 6d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_2 = 1d / 2d;
-    /** Constant: {@value}. */
+    /**
+     * Constant: {@value}.
+     */
     private static final double F_1_4 = 1d / 4d;
 
     /**
@@ -352,7 +436,9 @@ public final class FastMath {
         return Double.longBitsToDouble(xl);
     }
 
-    /** Compute the square root of a number.
+    /**
+     * Compute the square root of a number.
+     *
      * @param a number on which evaluation is done
      * @return square root of a
      */
@@ -374,7 +460,9 @@ public final class FastMath {
         return squareRoot;
     }
 
-    /** Compute the hyperbolic cosine of a number.
+    /**
+     * Compute the hyperbolic cosine of a number.
+     *
      * @param x number on which evaluation is done
      * @return hyperbolic cosine of x
      */
@@ -443,7 +531,9 @@ public final class FastMath {
         return result;
     }
 
-    /** Compute the hyperbolic sine of a number.
+    /**
+     * Compute the hyperbolic sine of a number.
+     *
      * @param x number on which evaluation is done
      * @return hyperbolic sine of x
      */
@@ -565,7 +655,9 @@ public final class FastMath {
         return result;
     }
 
-    /** Compute the hyperbolic tangent of a number.
+    /**
+     * Compute the hyperbolic tangent of a number.
+     *
      * @param x number on which evaluation is done
      * @return hyperbolic tangent of x
      */
@@ -685,7 +777,9 @@ public final class FastMath {
         return result;
     }
 
-    /** Compute the inverse hyperbolic cosine of a number.
+    /**
+     * Compute the inverse hyperbolic cosine of a number.
+     *
      * @param a number on which evaluation is done
      * @return inverse hyperbolic cosine of a
      */
@@ -693,7 +787,9 @@ public final class FastMath {
         return FastMath.log(a + FastMath.sqrt(a * a - 1));
     }
 
-    /** Compute the inverse hyperbolic sine of a number.
+    /**
+     * Compute the inverse hyperbolic sine of a number.
+     *
      * @param a number on which evaluation is done
      * @return inverse hyperbolic sine of a
      */
@@ -723,7 +819,9 @@ public final class FastMath {
         return negative ? -absAsinh : absAsinh;
     }
 
-    /** Compute the inverse hyperbolic tangent of a number.
+    /**
+     * Compute the inverse hyperbolic tangent of a number.
+     *
      * @param a number on which evaluation is done
      * @return inverse hyperbolic tangent of a
      */
@@ -753,8 +851,10 @@ public final class FastMath {
         return negative ? -absAtanh : absAtanh;
     }
 
-    /** Compute the signum of a number.
+    /**
+     * Compute the signum of a number.
      * The signum is -1 for negative numbers, +1 for positive numbers and 0 otherwise
+     *
      * @param a number on which evaluation is done
      * @return -1.0, -0.0, +0.0, +1.0 or NaN depending on sign of a
      */
@@ -762,8 +862,10 @@ public final class FastMath {
         return (a < 0.0) ? -1.0 : ((a > 0.0) ? 1.0 : a); // return +0.0/-0.0/NaN depending on a
     }
 
-    /** Compute the signum of a number.
+    /**
+     * Compute the signum of a number.
      * The signum is -1 for negative numbers, +1 for positive numbers and 0 otherwise
+     *
      * @param a number on which evaluation is done
      * @return -1.0, -0.0, +0.0, +1.0 or NaN depending on sign of a
      */
@@ -771,7 +873,9 @@ public final class FastMath {
         return (a < 0.0f) ? -1.0f : ((a > 0.0f) ? 1.0f : a); // return +0.0/-0.0/NaN depending on a
     }
 
-    /** Compute next number towards positive infinity.
+    /**
+     * Compute next number towards positive infinity.
+     *
      * @param a number to which neighbor should be computed
      * @return neighbor of a towards positive infinity
      */
@@ -779,7 +883,9 @@ public final class FastMath {
         return nextAfter(a, Double.POSITIVE_INFINITY);
     }
 
-    /** Compute next number towards positive infinity.
+    /**
+     * Compute next number towards positive infinity.
+     *
      * @param a number to which neighbor should be computed
      * @return neighbor of a towards positive infinity
      */
@@ -787,7 +893,9 @@ public final class FastMath {
         return nextAfter(a, Float.POSITIVE_INFINITY);
     }
 
-    /** Compute next number towards negative infinity.
+    /**
+     * Compute next number towards negative infinity.
+     *
      * @param a number to which neighbor should be computed
      * @return neighbor of a towards negative infinity
      * @since 3.4
@@ -796,7 +904,9 @@ public final class FastMath {
         return nextAfter(a, Double.NEGATIVE_INFINITY);
     }
 
-    /** Compute next number towards negative infinity.
+    /**
+     * Compute next number towards negative infinity.
+     *
      * @param a number to which neighbor should be computed
      * @return neighbor of a towards negative infinity
      * @since 3.4
@@ -807,22 +917,22 @@ public final class FastMath {
 
     /**
      * Exponential function.
-     *
+     * <p>
      * Computes exp(x), function result is nearly rounded.   It will be correctly
      * rounded to the theoretical value for 99.9% of input values, otherwise it will
      * have a 1 ULP error.
-     *
+     * <p>
      * Method:
-     *    Lookup intVal = exp(int(x))
-     *    Lookup fracVal = exp(int(x-int(x) / 1024.0) * 1024.0 );
-     *    Compute z as the exponential of the remaining bits by a polynomial minus one
-     *    exp(x) = intVal * fracVal * (1 + z)
-     *
+     * Lookup intVal = exp(int(x))
+     * Lookup fracVal = exp(int(x-int(x) / 1024.0) * 1024.0 );
+     * Compute z as the exponential of the remaining bits by a polynomial minus one
+     * exp(x) = intVal * fracVal * (1 + z)
+     * <p>
      * Accuracy:
-     *    Calculation is done with 63 bits of precision, so result should be correctly
-     *    rounded for 99.9% of input values, with less than 1 ULP error otherwise.
+     * Calculation is done with 63 bits of precision, so result should be correctly
+     * rounded for 99.9% of input values, with less than 1 ULP error otherwise.
      *
-     * @param x   a double
+     * @param x a double
      * @return double e<sup>x</sup>
      */
     public static double exp(double x) {
@@ -831,8 +941,9 @@ public final class FastMath {
 
     /**
      * Internal helper method for exponential function.
-     * @param x original argument of the exponential function
-     * @param extra extra bits of precision on input (To Be Confirmed)
+     *
+     * @param x      original argument of the exponential function
+     * @param extra  extra bits of precision on input (To Be Confirmed)
      * @param hiPrec extra bits of precision on output (To Be Confirmed)
      * @return exp(x)
      */
@@ -956,7 +1067,9 @@ public final class FastMath {
         return result;
     }
 
-    /** Compute exp(x) - 1
+    /**
+     * Compute exp(x) - 1
+     *
      * @param x number to compute shifted exponential
      * @return exp(x) - 1
      */
@@ -964,8 +1077,10 @@ public final class FastMath {
         return expm1(x, null);
     }
 
-    /** Internal helper method for expm1
-     * @param x number to compute shifted exponential
+    /**
+     * Internal helper method for expm1
+     *
+     * @param x         number to compute shifted exponential
      * @param hiPrecOut receive high precision result for -1.0 < x < 1.0
      * @return exp(x) - 1
      */
@@ -1114,7 +1229,7 @@ public final class FastMath {
     /**
      * Natural logarithm.
      *
-     * @param x   a double
+     * @param x a double
      * @return log(x)
      */
     public static double log(final double x) {
@@ -1123,7 +1238,8 @@ public final class FastMath {
 
     /**
      * Internal helper method for natural logarithm function.
-     * @param x original argument of the natural logarithm function
+     *
+     * @param x      original argument of the natural logarithm function
      * @param hiPrec extra bits of precision on output (To Be Confirmed)
      * @return log(x)
      */
@@ -1381,7 +1497,9 @@ public final class FastMath {
         }
     }
 
-    /** Compute the base 10 logarithm.
+    /**
+     * Compute the base 10 logarithm.
+     *
      * @param x a number
      * @return log10(x)
      */
@@ -1406,7 +1524,7 @@ public final class FastMath {
     /**
      * Computes the <a href="http://mathworld.wolfram.com/Logarithm.html">
      * logarithm</a> in a given base.
-     *
+     * <p>
      * Returns {@code NaN} if either argument is negative.
      * If {@code base} is 0 and {@code x} is positive, 0 is returned.
      * If {@code base} is positive and {@code x} is 0,
@@ -1414,7 +1532,7 @@ public final class FastMath {
      * If both arguments are 0, the result is {@code NaN}.
      *
      * @param base Base of the logarithm, must be greater than 0.
-     * @param x Argument, must be greater than 0.
+     * @param x    Argument, must be greater than 0.
      * @return the value of the logarithm, i.e. the number {@code y} such that
      * <code>base<sup>y</sup> = x</code>.
      * @since 1.2 (previously in {@code MathUtils}, moved as of version 3.0)
@@ -1426,8 +1544,8 @@ public final class FastMath {
     /**
      * Power function.  Compute x^y.
      *
-     * @param x   a double
-     * @param y   a double
+     * @param x a double
+     * @param y a double
      * @return double
      */
     public static double pow(final double x, final double y) {
@@ -1596,10 +1714,11 @@ public final class FastMath {
     }
 
     /**
-     *  Computes sin(x) - x, where |x| < 1/16.
-     *  Use a Remez polynomial approximation.
-     *  @param x a number smaller than 1/16
-     *  @return sin(x) - x
+     * Computes sin(x) - x, where |x| < 1/16.
+     * Use a Remez polynomial approximation.
+     *
+     * @param x a number smaller than 1/16
+     * @return sin(x) - x
      */
     private static double polySine(final double x) {
         double x2 = x * x;
@@ -1616,10 +1735,11 @@ public final class FastMath {
     }
 
     /**
-     *  Computes cos(x) - 1, where |x| < 1/16.
-     *  Use a Remez polynomial approximation.
-     *  @param x a number smaller than 1/16
-     *  @return cos(x) - 1
+     * Computes cos(x) - 1, where |x| < 1/16.
+     * Use a Remez polynomial approximation.
+     *
+     * @param x a number smaller than 1/16
+     * @return cos(x) - 1
      */
     private static double polyCosine(double x) {
         double x2 = x * x;
@@ -1634,11 +1754,12 @@ public final class FastMath {
     }
 
     /**
-     *  Compute sine over the first quadrant (0 < x < pi/2).
-     *  Use combination of table lookup and rational polynomial expansion.
-     *  @param xa number from which sine is requested
-     *  @param xb extra bits for x (may be 0.0)
-     *  @return sin(xa + xb)
+     * Compute sine over the first quadrant (0 < x < pi/2).
+     * Use combination of table lookup and rational polynomial expansion.
+     *
+     * @param xa number from which sine is requested
+     * @param xb extra bits for x (may be 0.0)
+     * @return sin(xa + xb)
      */
     private static double sinQ(double xa, double xb) {
         int idx = (int) ((xa * 8.0) + 0.5);
@@ -1756,9 +1877,10 @@ public final class FastMath {
     /**
      * Compute cosine in the first quadrant by subtracting input from PI/2 and
      * then calling sinQ.  This is more accurate as the input approaches PI/2.
-     *  @param xa number from which cosine is requested
-     *  @param xb extra bits for x (may be 0.0)
-     *  @return cos(xa + xb)
+     *
+     * @param xa number from which cosine is requested
+     * @param xb extra bits for x (may be 0.0)
+     * @return cos(xa + xb)
      */
     private static double cosQ(double xa, double xb) {
         final double pi2a = 1.5707963267948966;
@@ -1772,12 +1894,13 @@ public final class FastMath {
     }
 
     /**
-     *  Compute tangent (or cotangent) over the first quadrant.   0 < x < pi/2
-     *  Use combination of table lookup and rational polynomial expansion.
-     *  @param xa number from which sine is requested
-     *  @param xb extra bits for x (may be 0.0)
-     *  @param cotanFlag if true, compute the cotangent instead of the tangent
-     *  @return tan(xa + xb) (or cotangent, depending on cotanFlag)
+     * Compute tangent (or cotangent) over the first quadrant.   0 < x < pi/2
+     * Use combination of table lookup and rational polynomial expansion.
+     *
+     * @param xa        number from which sine is requested
+     * @param xb        extra bits for x (may be 0.0)
+     * @param cotanFlag if true, compute the cotangent instead of the tangent
+     * @return tan(xa + xb) (or cotangent, depending on cotanFlag)
      */
     private static double tanQ(double xa, double xb, boolean cotanFlag) {
 
@@ -1920,15 +2043,16 @@ public final class FastMath {
         return est + err;
     }
 
-    /** Reduce the input argument using the Payne and Hanek method.
-     *  This is good for all inputs 0.0 < x < inf
-     *  Output is remainder after dividing by PI/2
-     *  The result array should contain 3 numbers.
-     *  result[0] is the integer portion, so mod 4 this gives the quadrant.
-     *  result[1] is the upper bits of the remainder
-     *  result[2] is the lower bits of the remainder
+    /**
+     * Reduce the input argument using the Payne and Hanek method.
+     * This is good for all inputs 0.0 < x < inf
+     * Output is remainder after dividing by PI/2
+     * The result array should contain 3 numbers.
+     * result[0] is the integer portion, so mod 4 this gives the quadrant.
+     * result[1] is the upper bits of the remainder
+     * result[2] is the lower bits of the remainder
      *
-     * @param x number to reduce
+     * @param x      number to reduce
      * @param result placeholder where to put the result
      */
     private static void reducePayneHanek(double x, double[] result) {
@@ -2342,16 +2466,19 @@ public final class FastMath {
 
     /**
      * Arctangent function
-     *  @param x a number
-     *  @return atan(x)
+     *
+     * @param x a number
+     * @return atan(x)
      */
     public static double atan(double x) {
         return atan(x, 0.0, false);
     }
 
-    /** Internal helper function to compute arctangent.
-     * @param xa number from which arctangent is requested
-     * @param xb extra bits for x (may be 0.0)
+    /**
+     * Internal helper function to compute arctangent.
+     *
+     * @param xa        number from which arctangent is requested
+     * @param xb        extra bits for x (may be 0.0)
      * @param leftPlane if true, result angle must be put in the left half plane
      * @return atan(xa + xb) (or angle shifted by {@code PI} if leftPlane is true)
      */
@@ -2504,6 +2631,7 @@ public final class FastMath {
 
     /**
      * Two arguments arctangent function
+     *
      * @param y ordinate
      * @param x abscissa
      * @return phase angle of point (x,y) between {@code -PI} and {@code PI}
@@ -2623,7 +2751,9 @@ public final class FastMath {
         return atan(ra, rb, x < 0);
     }
 
-    /** Compute the arc sine of a number.
+    /**
+     * Compute the arc sine of a number.
+     *
      * @param x number on which evaluation is done
      * @return arc sine of x
      */
@@ -2699,7 +2829,9 @@ public final class FastMath {
         return atan(ra, rb, false);
     }
 
-    /** Compute the arc cosine of a number.
+    /**
+     * Compute the arc cosine of a number.
+     *
      * @param x number on which evaluation is done
      * @return arc cosine of x
      */
@@ -2781,7 +2913,9 @@ public final class FastMath {
         return atan(ra, rb, x < 0);
     }
 
-    /** Compute the cubic root of a number.
+    /**
+     * Compute the cubic root of a number.
+     *
      * @param x number on which evaluation is done
      * @return cubic root of x
      */
@@ -2866,9 +3000,10 @@ public final class FastMath {
     }
 
     /**
-     *  Convert degrees to radians, with error of less than 0.5 ULP
-     *  @param x angle in degrees
-     *  @return x converted into radians
+     * Convert degrees to radians, with error of less than 0.5 ULP
+     *
+     * @param x angle in degrees
+     * @return x converted into radians
      */
     public static double toRadians(double x) {
         if (Double.isInfinite(x) || x == 0.0) { // Matches +/- 0.0; return correct sign
@@ -2890,9 +3025,10 @@ public final class FastMath {
     }
 
     /**
-     *  Convert radians to degrees, with error of less than 0.5 ULP
-     *  @param x angle in radians
-     *  @return x converted into degrees
+     * Convert radians to degrees, with error of less than 0.5 ULP
+     *
+     * @param x angle in radians
+     * @return x converted into degrees
      */
     public static double toDegrees(double x) {
         if (Double.isInfinite(x) || x == 0.0) { // Matches +/- 0.0; return correct sign
@@ -2911,6 +3047,7 @@ public final class FastMath {
 
     /**
      * Absolute value.
+     *
      * @param x number from which absolute value is requested
      * @return abs(x)
      */
@@ -2921,6 +3058,7 @@ public final class FastMath {
 
     /**
      * Absolute value.
+     *
      * @param x number from which absolute value is requested
      * @return abs(x)
      */
@@ -2935,6 +3073,7 @@ public final class FastMath {
 
     /**
      * Absolute value.
+     *
      * @param x number from which absolute value is requested
      * @return abs(x)
      */
@@ -2944,6 +3083,7 @@ public final class FastMath {
 
     /**
      * Absolute value.
+     *
      * @param x number from which absolute value is requested
      * @return abs(x)
      */
@@ -2953,6 +3093,7 @@ public final class FastMath {
 
     /**
      * Compute least significant bit (Unit in Last Position) for a number.
+     *
      * @param x number from which ulp is requested
      * @return ulp(x)
      */
@@ -2965,6 +3106,7 @@ public final class FastMath {
 
     /**
      * Compute least significant bit (Unit in Last Position) for a number.
+     *
      * @param x number from which ulp is requested
      * @return ulp(x)
      */
@@ -2977,6 +3119,7 @@ public final class FastMath {
 
     /**
      * Multiply a double number by a power of 2.
+     *
      * @param d number to multiply
      * @param n power of 2
      * @return d &times; 2<sup>n</sup>
@@ -3060,6 +3203,7 @@ public final class FastMath {
 
     /**
      * Multiply a float number by a power of 2.
+     *
      * @param f number to multiply
      * @param n power of 2
      * @return f &times; 2<sup>n</sup>
@@ -3169,9 +3313,9 @@ public final class FastMath {
      * If {@code d} is infinite and direction does not
      * bring it back to finite numbers, it is returned unchanged.</p>
      *
-     * @param d base number
+     * @param d         base number
      * @param direction (the only important thing is whether
-     * {@code direction} is greater or smaller than {@code d})
+     *                  {@code direction} is greater or smaller than {@code d})
      * @return the next machine representable number in the specified direction
      */
     public static double nextAfter(double d, double direction) {
@@ -3226,9 +3370,9 @@ public final class FastMath {
      * If {@code f} is infinite and direction does not
      * bring it back to finite numbers, it is returned unchanged.</p>
      *
-     * @param f base number
+     * @param f         base number
      * @param direction (the only important thing is whether
-     * {@code direction} is greater or smaller than {@code f})
+     *                  {@code direction} is greater or smaller than {@code f})
      * @return the next machine representable number in the specified direction
      */
     public static float nextAfter(final float f, final double direction) {
@@ -3263,7 +3407,9 @@ public final class FastMath {
         return var0 < var2 ? var2 - 1 : var2;
     }
 
-    /** Get the largest whole number smaller than x.
+    /**
+     * Get the largest whole number smaller than x.
+     *
      * @param x number from which floor is requested
      * @return a double number f such that f is an integer f &lt;= x &lt; f + 1.0
      */
@@ -3290,7 +3436,9 @@ public final class FastMath {
         return y;
     }
 
-    /** Get the smallest whole number larger than x.
+    /**
+     * Get the smallest whole number larger than x.
+     *
      * @param x number from which ceil is requested
      * @return a double number c such that c is an integer c - 1.0 &lt; x &lt;= c
      */
@@ -3315,7 +3463,9 @@ public final class FastMath {
         return y;
     }
 
-    /** Get the whole number that is the nearest to x, or the even one if x is exactly half way between two integers.
+    /**
+     * Get the whole number that is the nearest to x, or the even one if x is exactly half way between two integers.
+     *
      * @param x number from which nearest whole number is requested
      * @return a double number r such that r is an integer r - 0.5 &lt;= x &lt;= r + 0.5
      */
@@ -3338,7 +3488,9 @@ public final class FastMath {
         return (z & 1) == 0 ? y : y + 1.0;
     }
 
-    /** Get the closest long to x.
+    /**
+     * Get the closest long to x.
+     *
      * @param x number from which closest long is requested
      * @return closest long to x
      */
@@ -3364,7 +3516,9 @@ public final class FastMath {
         }
     }
 
-    /** Get the closest int to x.
+    /**
+     * Get the closest int to x.
+     *
      * @param x number from which closest int is requested
      * @return closest int to x
      */
@@ -3882,11 +4036,17 @@ public final class FastMath {
      * Enclose the Cody/Waite reduction (used in "sin", "cos" and "tan").
      */
     private static class CodyWaite {
-        /** k */
+        /**
+         * k
+         */
         private final int finalK;
-        /** remA */
+        /**
+         * remA
+         */
         private final double finalRemA;
-        /** remB */
+        /**
+         * remB
+         */
         private final double finalRemB;
 
         /**

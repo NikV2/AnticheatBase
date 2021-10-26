@@ -7,9 +7,9 @@ import me.nik.anticheatbase.wrappers.WrapperPlayClientUseEntity;
 
 /**
  * A packet wrapper class that we'll use in order to make it easier for us to get the received or sent packet
- *
+ * <p>
  * While also caching a timestamp
- *
+ * <p>
  * NOTE: You may change this to fit with your own packet listener
  * For this example we'll be using ProtocolLib.
  */

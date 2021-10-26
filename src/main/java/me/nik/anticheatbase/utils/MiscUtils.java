@@ -16,7 +16,8 @@ import java.util.Random;
 
 public final class MiscUtils {
 
-    private MiscUtils(){}
+    private MiscUtils() {
+    }
 
     public static YamlConfiguration loadConfigurationUTF_8(final File file) {
 
@@ -35,6 +36,7 @@ public final class MiscUtils {
         return config;
     }
 
+    @SuppressWarnings("unchecked")
     public static <E> E randomElement(final Collection<? extends E> collection) {
         if (collection.size() == 0) return null;
 

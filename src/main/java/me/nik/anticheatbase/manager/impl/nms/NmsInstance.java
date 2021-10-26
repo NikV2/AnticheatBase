@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers.nms;
+package me.nik.anticheatbase.manager.impl.nms;
 
 import org.bukkit.Material;
 import org.bukkit.World;

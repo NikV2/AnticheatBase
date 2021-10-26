@@ -41,8 +41,7 @@ public class ProfileManager {
         return this.profiles;
     }
 
-    public void disInit() {
-
+    public void shutdown() {
         this.profiles.clear();
     }
 }

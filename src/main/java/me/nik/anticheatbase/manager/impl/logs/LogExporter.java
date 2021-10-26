@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers.logs;
+package me.nik.anticheatbase.manager.impl.logs;
 
 import me.nik.anticheatbase.files.Config;
 import org.bukkit.plugin.java.JavaPlugin;

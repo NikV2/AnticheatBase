@@ -6,7 +6,7 @@ import me.nik.anticheatbase.utils.MathUtils;
 
 /**
  * A sensitivity processor class that we'll be using in order to hold certain data
- *
+ * <p>
  * NOTE: This does not include a way to grab the player's sensitivity,
  * Feel free to add your own method since every person does it differently.
  */

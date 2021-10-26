@@ -1,6 +1,7 @@
 package me.nik.anticheatbase;
 
 import com.comphenix.protocol.ProtocolLibrary;
+import lombok.Getter;
 import me.nik.anticheatbase.commands.CommandManager;
 import me.nik.anticheatbase.files.Checks;
 import me.nik.anticheatbase.files.Config;
@@ -9,11 +10,11 @@ import me.nik.anticheatbase.files.commentedfiles.CommentedFileConfiguration;
 import me.nik.anticheatbase.listeners.ClientListener;
 import me.nik.anticheatbase.listeners.ProfileListener;
 import me.nik.anticheatbase.listeners.ViolationListener;
-import me.nik.anticheatbase.managers.AlertManager;
-import me.nik.anticheatbase.managers.CheckManager;
-import me.nik.anticheatbase.managers.logs.LogManager;
-import me.nik.anticheatbase.managers.nms.NmsManager;
-import me.nik.anticheatbase.managers.threads.ThreadManager;
+import me.nik.anticheatbase.manager.impl.AlertManager;
+import me.nik.anticheatbase.manager.impl.CheckManager;
+import me.nik.anticheatbase.manager.impl.logs.LogManager;
+import me.nik.anticheatbase.manager.impl.nms.NmsManager;
+import me.nik.anticheatbase.manager.impl.threads.ThreadManager;
 import me.nik.anticheatbase.playerdata.ProfileManager;
 import me.nik.anticheatbase.processors.listeners.BukkitListener;
 import me.nik.anticheatbase.processors.listeners.NetworkListener;
@@ -22,7 +23,6 @@ import me.nik.anticheatbase.tasks.TickTask;
 import me.nik.anticheatbase.tasks.ViolationTask;
 import me.nik.anticheatbase.utils.ReflectionUtils;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -32,13 +32,14 @@ import java.util.Arrays;
  *
  * @author Nik
  */
+@Getter
 public class Anticheat extends JavaPlugin {
 
     private static Anticheat instance;
 
-    private Config configuration;
-    private Checks checks;
-    private Lang lang;
+    private final Config configuration = new Config(this);
+    private final Checks checks = new Checks(this);
+    private final Lang lang = new Lang(this);
 
     private final ProfileManager profileManager = new ProfileManager();
 
@@ -46,7 +47,7 @@ public class Anticheat extends JavaPlugin {
     private final ThreadManager threadManager = new ThreadManager(this);
 
     // Might error for registering before enabled, doubt it.
-    private final AlertManager alertManager = new AlertManager(this);
+    private final AlertManager alertManager = new AlertManager();
     private final CheckManager checkManager = new CheckManager();
     private final NmsManager nmsManager = new NmsManager();
 
@@ -55,9 +56,9 @@ public class Anticheat extends JavaPlugin {
         instance = this;
 
         // Configuration Files
-        (this.configuration = new Config(this)).setup();
-        (this.checks = new Checks(this)).setup();
-        (this.lang = new Lang(this)).setup();
+        configuration.setup();
+        checks.setup();
+        lang.setup();
 
         //Tasks
         loadTasks();
@@ -96,40 +97,16 @@ public class Anticheat extends JavaPlugin {
         this.configuration.reset();
         this.checks.reset();
 
-        //Disinitialize
-        this.profileManager.disInit();
-        this.checkManager.disInit();
-        this.alertManager.disInit();
-        this.threadManager.disInit();
+        // Shutdown all managers
+        this.profileManager.shutdown();
+        this.checkManager.shutdown();
+        this.alertManager.shutdown();
+        this.threadManager.shutdown();
 
         //Clear reflection cache
         ReflectionUtils.clear();
 
         instance = null;
-    }
-
-    public CheckManager getCheckManager() {
-        return checkManager;
-    }
-
-    public AlertManager getAlertManager() {
-        return alertManager;
-    }
-
-    public ProfileManager getProfileManager() {
-        return profileManager;
-    }
-
-    public LogManager getLogManager() {
-        return logManager;
-    }
-
-    public ThreadManager getThreadManager() {
-        return threadManager;
-    }
-
-    public NmsManager getNmsManager() {
-        return nmsManager;
     }
 
     public CommentedFileConfiguration getConfiguration() {

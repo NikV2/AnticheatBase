@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers.custom;
+package me.nik.anticheatbase.manager.impl.custom;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -7,10 +7,10 @@ import org.bukkit.inventory.PlayerInventory;
 
 /**
  * A simple equipment class holding a profile's equipment
- *
+ * <p>
  * Surprisingly getting the player's equipment every single tick can hinder perfomance
  * And it does add up and make a difference on a big playercount.
- *
+ * <p>
  * With this class we'll be getting all of them every 5 ticks in order to save perfomance.
  */
 public class Equipment {

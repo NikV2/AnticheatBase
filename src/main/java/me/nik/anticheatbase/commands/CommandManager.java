@@ -2,7 +2,7 @@ package me.nik.anticheatbase.commands;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.commands.subcommands.AlertsCommand;
-import me.nik.anticheatbase.managers.MsgType;
+import me.nik.anticheatbase.manager.impl.MsgType;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

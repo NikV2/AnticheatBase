@@ -44,7 +44,7 @@ public class WrapperPlayClientUseEntity extends AbstractPacket {
      *
      * @param world - the current world of the entity.
      * @return The targeted entity.
-     *
+     * <p>
      * Throws async catcher in 1.17, Please do not use me!
      */
     public Entity getTarget(World world) {
@@ -56,7 +56,7 @@ public class WrapperPlayClientUseEntity extends AbstractPacket {
      *
      * @param event - the packet event.
      * @return The targeted entity.
-     *
+     * <p>
      * Throws async catcher in 1.17, Please do not use me!
      */
     public Entity getTarget(PacketEvent event) {

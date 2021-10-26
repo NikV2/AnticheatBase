@@ -10,7 +10,8 @@ import java.math.RoundingMode;
 
 public final class MathUtils {
 
-    private MathUtils(){}
+    private MathUtils() {
+    }
 
     //---------------------------------------------------------------------------------------
     public static final float FRICTION = .91F;
@@ -49,9 +50,9 @@ public final class MathUtils {
     public static float getAngle(final Vector one, final Vector two) {
 
         final double dot = Math.min(Math.max(
-                (one.getX() * two.getX() + one.getY() * two.getY() + one.getZ() * two.getZ())
-                        / (one.length() * two.length()),
-                -1.0),
+                        (one.getX() * two.getX() + one.getY() * two.getY() + one.getZ() * two.getZ())
+                                / (one.length() * two.length()),
+                        -1.0),
                 1.0);
 
         return (float) FastMath.acos(dot);

@@ -9,7 +9,8 @@ import org.bukkit.scheduler.BukkitTask;
  */
 public final class TaskUtils {
 
-    private TaskUtils(){}
+    private TaskUtils() {
+    }
 
     public static BukkitTask taskTimer(Runnable runnable, long delay, long interval) {
         return Bukkit.getScheduler().runTaskTimer(Anticheat.getInstance(), runnable, delay, interval);
