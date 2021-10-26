@@ -3,6 +3,7 @@ package me.nik.anticheatbase.checks.types;
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.api.events.AnticheatViolationEvent;
 import me.nik.anticheatbase.checks.annotations.Experimental;
+import me.nik.anticheatbase.checks.enums.CheckCategory;
 import me.nik.anticheatbase.checks.enums.CheckType;
 import me.nik.anticheatbase.files.commentedfiles.CommentedFileConfiguration;
 import me.nik.anticheatbase.playerdata.Profile;
@@ -28,6 +29,8 @@ public abstract class Check {
 
     private final String checkName, checkType, description, fullCheckName;
 
+    private final CheckCategory checkCategory;
+
     private int vl;
 
     private final boolean experimental;
@@ -48,6 +51,7 @@ public abstract class Check {
         this.checkName = check.getCheckName();
         this.checkType = type;
         this.description = description;
+        this.checkCategory = check.getCheckCategory();
 
         final CommentedFileConfiguration config = Anticheat.getInstance().getChecks();
         final String checkName = this.checkName.toLowerCase();
@@ -161,6 +165,10 @@ public abstract class Check {
 
     public String getCheckType() {
         return this.checkType;
+    }
+
+    public CheckCategory getCheckCategory() {
+        return checkCategory;
     }
 
     protected long now() {
