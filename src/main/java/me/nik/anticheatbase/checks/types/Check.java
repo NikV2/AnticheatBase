@@ -56,11 +56,8 @@ public abstract class Check {
         boolean isEnabled;
 
         if (type.isEmpty()) {
-
             isEnabled = config.getBoolean(checkName + ".enabled");
-
         } else {
-
             isEnabled = config.getBoolean(checkName + "." + checkType + ".enabled", config.getBoolean(checkName + "." + checkType));
         }
 

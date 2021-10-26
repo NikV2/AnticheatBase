@@ -1,8 +1,8 @@
 package me.nik.anticheatbase.playerdata.data;
 
 import com.comphenix.protocol.events.PacketContainer;
-import me.nik.anticheatbase.managers.custom.Effects;
-import me.nik.anticheatbase.managers.custom.Equipment;
+import me.nik.anticheatbase.manager.impl.custom.Effects;
+import me.nik.anticheatbase.manager.impl.custom.Equipment;
 import me.nik.anticheatbase.playerdata.Profile;
 import me.nik.anticheatbase.processors.Packet;
 import me.nik.anticheatbase.utils.CollisionUtils;

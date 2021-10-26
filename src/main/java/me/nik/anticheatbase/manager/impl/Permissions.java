@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers;
+package me.nik.anticheatbase.manager.impl;
 
 /**
  * A permissions enumerations class in order to cache our permissions and easily grab them

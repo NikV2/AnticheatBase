@@ -6,8 +6,8 @@ import me.nik.anticheatbase.tasks.TickTask;
 import me.nik.anticheatbase.utils.MathUtils;
 
 /**
- * A simple cinematic processor to determine whether or not a player is using cinematic
- *
+ * A simple cinematic processor to determine whether a player is using cinematic
+ * <p>
  * NOTE: This is not a perfect way to handle cinematic, However i figured i should add this since
  * It's simple and effective.
  */

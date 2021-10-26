@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers.custom;
+package me.nik.anticheatbase.manager.impl.custom;
 
 import me.nik.anticheatbase.utils.MathUtils;
 import me.nik.anticheatbase.utils.ServerUtils;
@@ -10,9 +10,9 @@ import java.util.Collection;
 
 /**
  * A simple effects class holding every information about the profile's effects
- *
+ * <p>
  * This is efficient since we're running one loop once and grabbing every effect we need.
- *
+ * <p>
  * We can also use this in order to get if they have had an effect in the last X milliseconds,
  * Which can be insanely useful.
  */

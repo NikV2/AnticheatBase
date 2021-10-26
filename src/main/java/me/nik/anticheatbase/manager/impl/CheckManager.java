@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers;
+package me.nik.anticheatbase.manager.impl;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
@@ -7,7 +7,7 @@ import me.nik.anticheatbase.checks.annotations.Testing;
 import me.nik.anticheatbase.checks.types.BukkitCheck;
 import me.nik.anticheatbase.checks.types.PacketCheck;
 import me.nik.anticheatbase.playerdata.Profile;
-import org.bukkit.Bukkit;
+import me.nik.anticheatbase.utils.Initializer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -19,7 +19,7 @@ import java.util.List;
  * A check manager class that we'll use in order to automatically register checks on startup
  * And load them directly in the player profile.
  */
-public class CheckManager {
+public class CheckManager implements Initializer {
 
     private final List<Constructor<? extends PacketCheck>> packetCheckConstructors = new ArrayList<>();
     private final List<Constructor<? extends BukkitCheck>> bukkitCheckConstructors = new ArrayList<>();
@@ -93,6 +93,11 @@ public class CheckManager {
         }
     }
 
+    @Override
+    public void init() {
+
+    }
+
     public List<BukkitCheck> getBukkitChecks(Profile profile) {
 
         final List<BukkitCheck> checks = new LinkedList<>();
@@ -116,19 +121,15 @@ public class CheckManager {
     }
 
     public List<PacketCheck> getPacketChecks(Profile profile) {
-
         final List<PacketCheck> checks = new LinkedList<>();
 
         for (final Constructor<? extends PacketCheck> constructor : this.packetCheckConstructors) {
-
             try {
-
                 final PacketCheck check = constructor.newInstance(profile);
 
                 if (!check.isEnabled()) continue;
 
                 checks.add(check);
-
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 e.printStackTrace();
             }
@@ -137,7 +138,8 @@ public class CheckManager {
         return checks;
     }
 
-    public void disInit() {
+    @Override
+    public void shutdown() {
         this.packetCheckConstructors.clear();
         this.bukkitCheckConstructors.clear();
     }

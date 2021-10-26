@@ -1,13 +1,14 @@
-package me.nik.anticheatbase.managers.logs;
+package me.nik.anticheatbase.manager.impl.logs;
 
 import me.nik.anticheatbase.files.Config;
-import me.nik.anticheatbase.managers.logs.impl.FileExporter;
+import me.nik.anticheatbase.manager.impl.logs.impl.FileExporter;
+import me.nik.anticheatbase.utils.Initializer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class LogManager {
+public class LogManager implements Initializer {
 
     private final Queue<PlayerLog> logsQueue = new ConcurrentLinkedQueue<>();
 
@@ -41,35 +42,40 @@ public class LogManager {
         this.logExporter.init();
     }
 
-    public void disInit() {
-        this.logsQueue.clear();
-        this.logExporter.disInit();
-    }
+    @Override
+    public void init() {
 
-    public Queue<PlayerLog> getLogsQueue() {
-        return this.logsQueue;
     }
 
     public void addLogToQueue(PlayerLog playerLog) {
-
-        if (!Config.Setting.LOGS_ENABLED.getBoolean()) return;
-
-        this.logsQueue.add(playerLog);
+        if (Config.Setting.LOGS_ENABLED.getBoolean()) {
+            this.logsQueue.add(playerLog);
+        }
     }
 
     public void clearQueuedLogs() {
         this.logsQueue.clear();
     }
 
-    public LogExporter getLogExporter() {
-        return this.logExporter;
+    public void setLogging(boolean logging) {
+        this.logging = logging;
     }
 
     public boolean isLogging() {
         return this.logging;
     }
 
-    public void setLogging(boolean logging) {
-        this.logging = logging;
+    public LogExporter getLogExporter() {
+        return this.logExporter;
+    }
+
+    public Queue<PlayerLog> getLogsQueue() {
+        return this.logsQueue;
+    }
+
+    @Override
+    public void shutdown() {
+        this.logsQueue.clear();
+        this.logExporter.disInit();
     }
 }

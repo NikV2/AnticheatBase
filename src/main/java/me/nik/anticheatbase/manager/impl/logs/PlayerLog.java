@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers.logs;
+package me.nik.anticheatbase.manager.impl.logs;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -13,7 +13,7 @@ public abstract class AbstractPacket {
      * Constructs a new strongly typed wrapper for the given packet.
      *
      * @param handle - handle to the raw packet data.
-     * @param type - the packet type.
+     * @param type   - the packet type.
      */
     protected AbstractPacket(PacketContainer handle, PacketType type) {
         // Make sure we're given a valid packet

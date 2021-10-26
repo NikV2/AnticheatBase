@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 
 /**
  * A BetterStream utility class
- *
+ * <p>
  * Obviously this does not include every single Stream method
  * However these methods are much faster than using streams.
  *

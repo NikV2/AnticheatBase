@@ -1,64 +1,57 @@
-package me.nik.anticheatbase.managers.threads;
+package me.nik.anticheatbase.manager.impl.threads;
 
 import me.nik.anticheatbase.Anticheat;
-import me.nik.anticheatbase.managers.custom.exception.AnticheatException;
+import me.nik.anticheatbase.manager.Manager;
+import me.nik.anticheatbase.manager.impl.custom.exception.AnticheatException;
 import me.nik.anticheatbase.playerdata.Profile;
 import me.nik.anticheatbase.utils.MiscUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * A simple thread manager class that'll help us make sure a player profile is provided with the best
  * Available thread at any time, While also shutting down threads that are not used.
  */
-public class ThreadManager implements Listener {
+public class ThreadManager extends Manager<ProfileThread> implements Listener {
 
     //Get a proper thread limit
     private static final int MAX_THREADS = Runtime.getRuntime().availableProcessors() * 2;
 
-    private final List<ProfileThread> profileThreads = new ArrayList<>();
-
     private final Anticheat plugin;
 
     public ThreadManager(Anticheat plugin) {
-
         this.plugin = plugin;
+    }
 
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+    @Override
+    public void init() {
+
     }
 
     public ProfileThread getAvailableProfileThread() {
-
         ProfileThread profileThread;
 
-        //Check whether or not we should create a new thread based on the thread limit
-        if (this.profileThreads.size() < MAX_THREADS) {
-
+        //Checks whether we should create a new thread based on the thread limit
+        if (size() < MAX_THREADS) {
             //Create a new profile thread and set it to our variable in order to use it
             profileThread = new ProfileThread();
 
             //Add our new profile thread to the list in order to use it for future profiles
-            this.profileThreads.add(profileThread);
-
+            add(profileThread);
         } else {
-
             //Get an available thread based on the profiles using it, Otherwise grab a random element to avoid issues.
-            profileThread = this.profileThreads
+            profileThread = this.getList()
                     .stream()
                     .min(Comparator.comparing(ProfileThread::getProfileCount))
-                    .orElse(MiscUtils.randomElement(this.profileThreads));
+                    .orElse(MiscUtils.randomElement(this.getList()));
         }
 
         //Throw an exception if the profile thread is null, Which should be impossible.
         if (profileThread == null) {
-
             throw new AnticheatException("Encountered a null profile thread, Please restart the server to avoid any issues.");
         }
 
@@ -68,7 +61,6 @@ public class ThreadManager implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onQuit(PlayerQuitEvent e) {
-
         Profile profile = this.plugin.getProfileManager().getProfile(e.getPlayer());
 
         if (profile == null) return;
@@ -80,19 +72,17 @@ public class ThreadManager implements Listener {
         Otherwise decrease the counter and return.
         */
         if (profileThread.getProfileCount() > 1) {
-
             profileThread.decrement();
-
             return;
         }
 
-        this.profileThreads.remove(profileThread.shutdownThread());
+        remove(profileThread.shutdownThread());
     }
 
-    public void disInit() {
+    @Override
+    public void shutdown() {
+        this.getList().forEach(ProfileThread::shutdownThread);
 
-        this.profileThreads.forEach(ProfileThread::shutdownThread);
-
-        this.profileThreads.clear();
+        clear();
     }
 }

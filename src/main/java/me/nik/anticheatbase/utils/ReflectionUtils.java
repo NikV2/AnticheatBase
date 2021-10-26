@@ -1,7 +1,7 @@
 package me.nik.anticheatbase.utils;
 
-import me.nik.anticheatbase.managers.custom.BoundingBox;
-import me.nik.anticheatbase.managers.custom.exception.AnticheatException;
+import me.nik.anticheatbase.manager.impl.custom.BoundingBox;
+import me.nik.anticheatbase.manager.impl.custom.exception.AnticheatException;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * A reflection utility class that we'll be using for certain things
- *
+ * <p>
  * In this class we'll also use caching making reflection less heavy
  */
 public final class ReflectionUtils {

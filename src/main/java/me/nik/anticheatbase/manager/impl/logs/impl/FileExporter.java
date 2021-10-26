@@ -1,18 +1,12 @@
-package me.nik.anticheatbase.managers.logs.impl;
+package me.nik.anticheatbase.manager.impl.logs.impl;
 
-import me.nik.anticheatbase.managers.logs.LogExporter;
-import me.nik.anticheatbase.managers.logs.PlayerLog;
+import me.nik.anticheatbase.manager.impl.logs.LogExporter;
+import me.nik.anticheatbase.manager.impl.logs.PlayerLog;
 import me.nik.anticheatbase.utils.ChatUtils;
 import me.nik.anticheatbase.utils.TaskUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

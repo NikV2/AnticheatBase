@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers;
+package me.nik.anticheatbase.manager.impl;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.utils.ChatUtils;

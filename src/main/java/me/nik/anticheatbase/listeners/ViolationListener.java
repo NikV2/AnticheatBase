@@ -3,12 +3,12 @@ package me.nik.anticheatbase.listeners;
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.api.events.AnticheatViolationEvent;
 import me.nik.anticheatbase.files.Config;
-import me.nik.anticheatbase.managers.MsgType;
-import me.nik.anticheatbase.managers.logs.PlayerLog;
+import me.nik.anticheatbase.manager.impl.MsgType;
+import me.nik.anticheatbase.manager.impl.logs.PlayerLog;
 import me.nik.anticheatbase.playerdata.Profile;
 import me.nik.anticheatbase.tasks.TickTask;
-import me.nik.anticheatbase.utils.ChatUtils;
 import me.nik.anticheatbase.utils.JsonBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -82,11 +82,11 @@ public class ViolationListener implements Listener {
                         .setClickEvent(JsonBuilder.ClickEventType.RUN_COMMAND, "/tp " + playerName)
                         .buildText();
 
-                jsonBuilder.sendMessage(this.plugin.getAlertManager().getPlayersWithAlerts());
+                jsonBuilder.sendMessage(this.plugin.getAlertManager().getList());
 
                 if (!Config.Setting.CHECK_SETTINGS_ALERT_CONSOLE.getBoolean()) break alerts;
 
-                System.out.println(ChatUtils.stripColorCodes(alertMessage));
+                Bukkit.getConsoleSender().sendMessage(alertMessage);
             }
         });
     }

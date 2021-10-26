@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers.custom;
+package me.nik.anticheatbase.manager.impl.custom;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;

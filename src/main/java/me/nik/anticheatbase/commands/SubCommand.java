@@ -33,7 +33,7 @@ public abstract class SubCommand {
     protected abstract int maxArguments();
 
     /**
-     * @return Whether or not this command can be executed through the console
+     * @return Whether this command can be executed through the console
      */
     protected abstract boolean canConsoleExecute();
 
@@ -41,7 +41,7 @@ public abstract class SubCommand {
      * The method that will be run once the command is executed
      *
      * @param sender Sender
-     * @param args Args
+     * @param args   Args
      */
     protected abstract void perform(CommandSender sender, String[] args);
 }

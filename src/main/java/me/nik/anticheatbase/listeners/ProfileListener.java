@@ -2,7 +2,7 @@ package me.nik.anticheatbase.listeners;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.files.Config;
-import me.nik.anticheatbase.managers.Permissions;
+import me.nik.anticheatbase.manager.impl.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,7 +23,6 @@ public class ProfileListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent e) {
-
         final Player player = e.getPlayer();
 
         this.plugin.getProfileManager().createProfile(player);

@@ -1,4 +1,4 @@
-package me.nik.anticheatbase.managers.custom;
+package me.nik.anticheatbase.manager.impl.custom;
 
 import me.nik.anticheatbase.playerdata.Profile;
 import me.nik.anticheatbase.playerdata.data.MovementData;
@@ -6,10 +6,10 @@ import me.nik.anticheatbase.playerdata.data.MovementData;
 /**
  * A simple class that we'll be using for exempting some checks, We'll cache the booleans every tick to
  * Save up some perfomance except for the ones that get updated by the server.
- *
+ * <p>
  * This is similar to Elevated's Exempt method however instead of using Predicates
  * We're caching the booleans as soon as we receive a packet for maximum perfomance.
- *
+ * <p>
  * This is a LOT faster especially when having a lot of checks, Using cached booleans instead of
  * Checking for example (player.getAllowFlight()) every single tick on every check.
  */
