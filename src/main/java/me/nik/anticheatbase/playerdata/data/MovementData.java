@@ -66,8 +66,8 @@ public class MovementData {
             this.lastOnGround = this.onGround;
             this.onGround = onGround;
 
-            this.flyTicks = onGround ? 0 : this.flyTicks++;
-            this.clientGroundTicks = onGround ? this.clientGroundTicks++ : 0;
+            this.flyTicks = onGround ? 0 : this.flyTicks + 1;
+            this.clientGroundTicks = onGround ? this.clientGroundTicks + 1 : 0;
 
             Location location = new Location(world, x, y, z, yaw, pitch);
             Location lastLocation = getLocation() != null ? getLocation() : location;
@@ -88,8 +88,8 @@ public class MovementData {
             this.lastOnGround = this.onGround;
             this.onGround = onGroundPosLook;
 
-            this.flyTicks = onGroundPosLook ? 0 : this.flyTicks++;
-            this.clientGroundTicks = onGroundPosLook ? this.clientGroundTicks++ : 0;
+            this.flyTicks = onGroundPosLook ? 0 : this.flyTicks + 1;
+            this.clientGroundTicks = onGroundPosLook ? this.clientGroundTicks + 1 : 0;
 
             Location locationPosLook = new Location(world, xPosLook, yPosLook, zPosLook, yawPosLook, pitchPosLook);
             Location lastLocationPosLook = getLocation() != null ? getLocation() : locationPosLook;
@@ -110,8 +110,8 @@ public class MovementData {
             this.lastOnGround = this.onGround;
             this.onGround = onGroundLook;
 
-            this.flyTicks = onGroundLook ? 0 : this.flyTicks++;
-            this.clientGroundTicks = onGroundLook ? this.clientGroundTicks++ : 0;
+            this.flyTicks = onGroundLook ? 0 : this.flyTicks + 1;
+            this.clientGroundTicks = onGroundLook ? this.clientGroundTicks + 1 : 0;
 
             Location locationLook = new Location(world, xLook, yLook, zLook, yawLook, pitchLook);
             Location lastLocationLook = getLocation() != null ? getLocation() : locationLook;
