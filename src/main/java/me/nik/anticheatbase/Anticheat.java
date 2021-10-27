@@ -53,24 +53,16 @@ public class Anticheat extends JavaPlugin {
 
         instance = this;
 
-        //Setup
-        this.configuration = new Config(this);
-        this.checks = new Checks(this);
-        this.lang = new Lang(this);
-        this.profileManager = new ProfileManager();
-        this.logManager = new LogManager();
-        this.threadManager = new ThreadManager(this);
-        this.alertManager = new AlertManager();
-        this.checkManager = new CheckManager();
-        this.nmsManager = new NmsManager();
-
         //Initialize
-        this.configuration.init();
-        this.checks.init();
-        this.lang.init();
-        this.profileManager.init();
-        this.logManager.init();
-        this.checkManager.init();
+        (this.configuration = new Config(this)).init();
+        (this.checks = new Checks(this)).init();
+        (this.lang = new Lang(this)).init();
+        (this.profileManager = new ProfileManager()).init();
+        (this.logManager = new LogManager()).init();
+        (this.threadManager = new ThreadManager(this)).init();
+        (this.alertManager = new AlertManager()).init();
+        (this.checkManager = new CheckManager()).init();
+        this.nmsManager = new NmsManager();
 
         //Tasks
         loadTasks();
