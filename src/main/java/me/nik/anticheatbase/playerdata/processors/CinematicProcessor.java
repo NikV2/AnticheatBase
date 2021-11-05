@@ -13,8 +13,8 @@ import me.nik.anticheatbase.utils.MathUtils;
  */
 public class CinematicProcessor {
 
-    //This is the usual minimum constant when using cinematic
-    private static final double CINEMATIC_CONSTANT = 7E-3;
+    //This is the minimum rotation constant
+    private static final double CINEMATIC_CONSTANT = 7.8125E-3;
 
     private final Profile profile;
     private int lastCinematicTicks, cinematicTicks;

@@ -17,7 +17,7 @@ public final class MathUtils {
     public static final float FRICTION = .91F;
     public static final double WATER_FRICTION = .800000011920929D;
     public static final double SERVER_GROUND_DIVISOR = .015625D;
-    public static final double MOTION_Y_MULTIPLIER = .9800000190734863D;
+    public static final double MOTION_Y_FRICTION = .9800000190734863D;
     public static final double MAXIMUM_MOTION_Y = .41999998688697815D;
     //---------------------------------------------------------------------------------------
 
