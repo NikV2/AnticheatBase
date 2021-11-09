@@ -5,14 +5,13 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.google.common.collect.ImmutableSet;
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.playerdata.Profile;
 import me.nik.anticheatbase.processors.Packet;
+import me.nik.anticheatbase.utils.ServerUtils;
 import me.nik.anticheatbase.wrappers.WrapperPlayServerEntityVelocity;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A network listener class that we'll use in order to listen for received and sent packets for our checks and data.
@@ -21,30 +20,52 @@ public class NetworkListener extends PacketAdapter {
 
     private final Anticheat plugin;
 
-    private static final List<PacketType> LISTENING_PACKETS = new ArrayList<>();
-
-    static {
-
-        //Listen for every single client packet
-        PacketType.Play.Client.getInstance().values()
-                .stream()
-                .filter(PacketType::isSupported)
-                .forEach(LISTENING_PACKETS::add);
-
-        //Listen for every single server packet
-        PacketType.Play.Server.getInstance().values()
-                .stream()
-                .filter(PacketType::isSupported)
-                .forEach(LISTENING_PACKETS::add);
-
-        /*
-        Feel free to filter out any packet types that you don't want to listen to.
-        I simply added every single thing since this is just a base.
-         */
-    }
+    /*
+    Filter only the clientbound and serverbound packets that we'll actually use.
+    This ensures that we'll be maximizing our perfomance by not processing any
+    Packets that we're never using.
+     */
+    private static final ImmutableSet<PacketType> WHITELISTED_PACKETS = new ImmutableSet.Builder<PacketType>()
+            .add(
+                    /*
+                    Clientbound Packets
+                     */
+                    ServerUtils.isCavesUpdate() ? PacketType.Play.Client.GROUND : PacketType.Play.Client.FLYING,
+                    PacketType.Play.Client.POSITION,
+                    PacketType.Play.Client.POSITION_LOOK,
+                    PacketType.Play.Client.LOOK,
+                    PacketType.Play.Client.ABILITIES,
+                    PacketType.Play.Client.ARM_ANIMATION,
+                    PacketType.Play.Client.BLOCK_DIG,
+                    PacketType.Play.Client.BLOCK_PLACE,
+                    PacketType.Play.Client.CHAT,
+                    PacketType.Play.Client.ENTITY_ACTION,
+                    PacketType.Play.Client.KEEP_ALIVE,
+                    ServerUtils.isCavesUpdate() ? PacketType.Play.Client.PONG : PacketType.Play.Client.TRANSACTION,
+                    PacketType.Play.Client.RESOURCE_PACK_STATUS,
+                    PacketType.Play.Client.SETTINGS,
+                    PacketType.Play.Client.SPECTATE,
+                    PacketType.Play.Client.STEER_VEHICLE,
+                    PacketType.Play.Client.USE_ENTITY,
+                    PacketType.Play.Client.USE_ITEM,
+                    PacketType.Play.Client.VEHICLE_MOVE,
+                    PacketType.Play.Client.WINDOW_CLICK,
+                    PacketType.Play.Client.SET_CREATIVE_SLOT,
+                    PacketType.Play.Client.HELD_ITEM_SLOT
+            ).add(
+                    /*
+                    Serverbound Packets
+                     */
+                    PacketType.Play.Server.EXPLOSION,
+                    PacketType.Play.Server.ENTITY_VELOCITY,
+                    PacketType.Play.Server.KEEP_ALIVE,
+                    PacketType.Play.Server.ABILITIES,
+                    PacketType.Play.Server.POSITION,
+                    ServerUtils.isCavesUpdate() ? PacketType.Play.Server.PING : PacketType.Play.Server.TRANSACTION
+            ).build();
 
     public NetworkListener(Anticheat plugin) {
-        super(plugin, ListenerPriority.MONITOR, LISTENING_PACKETS);
+        super(plugin, ListenerPriority.MONITOR, WHITELISTED_PACKETS);
 
         this.plugin = plugin;
     }
