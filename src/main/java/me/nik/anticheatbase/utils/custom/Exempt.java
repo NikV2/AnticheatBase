@@ -1,7 +1,7 @@
 package me.nik.anticheatbase.utils.custom;
 
 import me.nik.anticheatbase.playerdata.Profile;
-import me.nik.anticheatbase.playerdata.data.MovementData;
+import me.nik.anticheatbase.playerdata.data.impl.MovementData;
 
 /**
  * A simple class that we'll be using for exempting some checks, We'll cache the booleans every tick to
@@ -27,7 +27,7 @@ public class Exempt {
 
         MovementData movementData = profile.getMovementData();
 
-        //Example, Don't do this lol
+        //Example
         this.movement = movementData.getDeltaXZ() == 0D && movementData.getDeltaY() == 0D;
     }
 

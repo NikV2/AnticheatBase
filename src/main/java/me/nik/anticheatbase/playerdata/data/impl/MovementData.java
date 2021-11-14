@@ -1,7 +1,8 @@
-package me.nik.anticheatbase.playerdata.data;
+package me.nik.anticheatbase.playerdata.data.impl;
 
 import com.comphenix.protocol.events.PacketContainer;
 import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.playerdata.data.Data;
 import me.nik.anticheatbase.processors.Packet;
 import me.nik.anticheatbase.utils.CollisionUtils;
 import me.nik.anticheatbase.utils.MathUtils;
@@ -16,9 +17,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 /**
- * A movement data class holding every essential information we need when it comes to movement related data.
+ * A action data class holding every essential information we need when it comes to player actions.
  */
-public class MovementData {
+public class MovementData implements Data {
 
     private final Profile profile;
 
@@ -42,7 +43,8 @@ public class MovementData {
         this.equipment = new Equipment();
     }
 
-    public void processPacket(Packet packet) {
+    @Override
+    public void process(Packet packet) {
 
         final Player p = profile.getPlayer();
 

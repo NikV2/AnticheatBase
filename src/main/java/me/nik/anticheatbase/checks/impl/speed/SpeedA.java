@@ -4,7 +4,7 @@ import me.nik.anticheatbase.checks.annotations.Experimental;
 import me.nik.anticheatbase.checks.enums.CheckType;
 import me.nik.anticheatbase.checks.types.PacketCheck;
 import me.nik.anticheatbase.playerdata.Profile;
-import me.nik.anticheatbase.playerdata.data.MovementData;
+import me.nik.anticheatbase.playerdata.data.impl.MovementData;
 import me.nik.anticheatbase.processors.Packet;
 
 @Experimental

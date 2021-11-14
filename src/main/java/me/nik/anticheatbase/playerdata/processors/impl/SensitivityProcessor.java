@@ -1,7 +1,8 @@
-package me.nik.anticheatbase.playerdata.processors;
+package me.nik.anticheatbase.playerdata.processors.impl;
 
 import me.nik.anticheatbase.playerdata.Profile;
-import me.nik.anticheatbase.playerdata.data.RotationData;
+import me.nik.anticheatbase.playerdata.data.impl.RotationData;
+import me.nik.anticheatbase.playerdata.processors.Processor;
 import me.nik.anticheatbase.utils.MathUtils;
 
 /**
@@ -10,7 +11,7 @@ import me.nik.anticheatbase.utils.MathUtils;
  * NOTE: This does not include a way to grab the player's sensitivity,
  * Feel free to add your own method since every person does it differently.
  */
-public class SensitivityProcessor {
+public class SensitivityProcessor implements Processor {
 
     private final Profile profile;
 
@@ -20,7 +21,8 @@ public class SensitivityProcessor {
         this.profile = profile;
     }
 
-    public void handle() {
+    @Override
+    public void process() {
 
         RotationData data = profile.getRotationData();
 

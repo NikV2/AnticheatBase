@@ -1,8 +1,8 @@
-package me.nik.anticheatbase.playerdata.processors;
+package me.nik.anticheatbase.playerdata.processors.impl;
 
 import me.nik.anticheatbase.playerdata.Profile;
-import me.nik.anticheatbase.playerdata.data.RotationData;
-import me.nik.anticheatbase.tasks.TickTask;
+import me.nik.anticheatbase.playerdata.data.impl.RotationData;
+import me.nik.anticheatbase.playerdata.processors.Processor;
 import me.nik.anticheatbase.utils.MathUtils;
 
 /**
@@ -11,7 +11,7 @@ import me.nik.anticheatbase.utils.MathUtils;
  * NOTE: This is not a perfect way to handle cinematic, However i figured i should add this since
  * It's simple and effective.
  */
-public class CinematicProcessor {
+public class CinematicProcessor implements Processor {
 
     //This is the minimum rotation constant
     private static final double CINEMATIC_CONSTANT = 7.8125E-3;
@@ -28,9 +28,11 @@ public class CinematicProcessor {
         return this.cinematic;
     }
 
-    public void handle() {
+    @Override
+    public void process() {
 
-        final int currentTick = TickTask.getCurrentTick();
+        //Update
+        this.lastCinematicTicks = this.cinematic && this.cinematicTicks > 3 ? 0 : this.lastCinematicTicks + 1;
 
         RotationData data = profile.getRotationData();
 
@@ -64,11 +66,9 @@ public class CinematicProcessor {
         this.cinematicTicks -= this.cinematicTicks > 5 ? 1 : 0;
 
         this.cinematic = this.cinematicTicks > 2 || getLastCinematicTicks() < 80;
-
-        if (this.cinematic && this.cinematicTicks > 3) this.lastCinematicTicks = currentTick;
     }
 
     public int getLastCinematicTicks() {
-        return MathUtils.elapsedTicks(this.lastCinematicTicks);
+        return this.lastCinematicTicks;
     }
 }

@@ -1,9 +1,10 @@
-package me.nik.anticheatbase.playerdata.data;
+package me.nik.anticheatbase.playerdata.data.impl;
 
 import com.comphenix.protocol.events.PacketContainer;
 import me.nik.anticheatbase.playerdata.Profile;
-import me.nik.anticheatbase.playerdata.processors.CinematicProcessor;
-import me.nik.anticheatbase.playerdata.processors.SensitivityProcessor;
+import me.nik.anticheatbase.playerdata.data.Data;
+import me.nik.anticheatbase.playerdata.processors.impl.CinematicProcessor;
+import me.nik.anticheatbase.playerdata.processors.impl.SensitivityProcessor;
 import me.nik.anticheatbase.processors.Packet;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientLook;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientPositionLook;
@@ -11,7 +12,7 @@ import me.nik.anticheatbase.wrappers.WrapperPlayClientPositionLook;
 /**
  * A rotation data class holding every essential information we need when it comes to aim related data.
  */
-public class RotationData {
+public class RotationData implements Data {
 
     private final Profile profile;
 
@@ -27,7 +28,8 @@ public class RotationData {
         this.cinematicProcessor = new CinematicProcessor(profile);
     }
 
-    public void processPacket(Packet packet) {
+    @Override
+    public void process(Packet packet) {
 
         final PacketContainer container = packet.getPacket();
 
@@ -88,9 +90,9 @@ public class RotationData {
         this.lastPitchAccel = lastPitchAccel;
         this.pitchAccel = pitchAccel;
 
-        this.sensitivityProcessor.handle();
+        this.sensitivityProcessor.process();
 
-        this.cinematicProcessor.handle();
+        this.cinematicProcessor.process();
     }
 
     public SensitivityProcessor getSensitivityProcessor() {
