@@ -8,6 +8,7 @@ import me.nik.anticheatbase.files.Config;
 import me.nik.anticheatbase.manager.impl.CheckManager;
 import me.nik.anticheatbase.manager.impl.Permissions;
 import me.nik.anticheatbase.manager.impl.threads.ProfileThread;
+import me.nik.anticheatbase.playerdata.data.ActionData;
 import me.nik.anticheatbase.playerdata.data.MovementData;
 import me.nik.anticheatbase.playerdata.data.RotationData;
 import me.nik.anticheatbase.processors.Packet;
@@ -30,6 +31,7 @@ public class Profile {
     //Data
     private final MovementData movementData = new MovementData(this);
     private final RotationData rotationData = new RotationData(this);
+    private final ActionData actionData = new ActionData(this);
 
     //Checks
     private List<PacketCheck> packetChecks;
@@ -85,6 +87,8 @@ public class Profile {
 
         //Process data
         this.movementData.processPacket(packet);
+        this.rotationData.processPacket(packet);
+        this.actionData.processPacket(packet);
 
         //Handle exempts
         this.exempt.handleExempts();
@@ -181,5 +185,9 @@ public class Profile {
 
     public void setClient(String client) {
         this.client = client;
+    }
+
+    public ActionData getActionData() {
+        return actionData;
     }
 }
