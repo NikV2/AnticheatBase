@@ -117,6 +117,7 @@ public class CheckManager implements Initializer {
     }
 
     public List<PacketCheck> getPacketChecks(Profile profile) {
+
         final List<PacketCheck> checks = new LinkedList<>();
 
         for (final Constructor<? extends PacketCheck> constructor : this.packetCheckConstructors) {

@@ -81,6 +81,9 @@ public class NetworkListener extends PacketAdapter {
         super(plugin, ListenerPriority.MONITOR, WHITELISTED_PACKETS);
 
         this.plugin = plugin;
+
+        //No need to keep those
+        WHITELISTED_PACKETS.clear();
     }
 
     @Override

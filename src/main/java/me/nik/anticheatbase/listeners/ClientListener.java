@@ -39,8 +39,11 @@ public class ClientListener implements Listener, PluginMessageListener {
         final Player p = e.getPlayer();
 
         try {
+
             p.getClass().getMethod("addChannel", String.class).invoke(p, CHANNEL);
+
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+
             //?????
             ex.printStackTrace();
         }
@@ -48,6 +51,7 @@ public class ClientListener implements Listener, PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
+
         Profile profile = this.plugin.getProfileManager().getProfile(player);
 
         if (profile == null) return;

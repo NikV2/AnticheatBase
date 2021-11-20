@@ -98,12 +98,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-      <dependency>
-          <groupId>org.spigotmc</groupId>
-          <artifactId>spigot-api</artifactId>
-          <version>1.17.1-R0.1-SNAPSHOT</version>
-          <scope>compile</scope>
-      </dependency>
   </dependencies>
   <properties>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

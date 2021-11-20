@@ -24,7 +24,7 @@ public class SpeedA extends PacketCheck {
         if (data.getDeltaXZ() > 0D) {
 
             if (increaseBuffer() > 100) fail(
-                    "FLAGGED BY THE BEST SPEED CHECK EVER IN EXISTENCE, Credits to Elon Musk"
+                    "FLAGGED BY THE BEST SPEED CHECK EVER IN EXISTENCE, Credits to Elon Musk."
             );
 
         } else decreaseBufferBy(Double.MIN_VALUE);
