@@ -1,5 +1,7 @@
 package me.nik.anticheatbase.nms;
 
+import org.bukkit.Bukkit;
+
 /**
  * A simple NMS Manager class
  * <p>
@@ -11,7 +13,7 @@ package me.nik.anticheatbase.nms;
  */
 public class NmsManager {
 
-    /*private final NmsInstance nmsInstance;
+    private final NmsInstance nmsInstance;
 
     public NmsManager() {
 
@@ -21,7 +23,7 @@ public class NmsManager {
 
         switch (version) {
 
-            //----------------------------------------------\\
+            /*//----------------------------------------------\\
 
             case "v1_17_R1":
                 this.nmsInstance = new Instance_1_17_R1();
@@ -103,7 +105,7 @@ public class NmsManager {
 
             case "v1_8_R1":
                 this.nmsInstance = new Instance1_8_R1();
-                break;
+                break;*/
 
             //----------------------------------------------\\
 
@@ -115,5 +117,5 @@ public class NmsManager {
 
     public NmsInstance getNmsInstance() {
         return nmsInstance;
-    }*/
+    }
 }

@@ -2,17 +2,23 @@ package me.nik.anticheatbase.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 
-public class WrapperPlayClientLook extends AbstractPacket {
+public class WrapperPlayClientLook extends PacketWrapper {
+
     public static final PacketType TYPE = PacketType.Play.Client.LOOK;
 
-    public WrapperPlayClientLook() {
-        super(new PacketContainer(TYPE), TYPE);
-        handle.getModifier().writeDefaults();
-    }
+    private final float yaw, pitch;
+    private final boolean onGround;
 
     public WrapperPlayClientLook(PacketContainer packet) {
         super(packet, TYPE);
+
+        StructureModifier<Float> floats = handle.getFloat();
+
+        this.yaw = floats.read(0);
+        this.pitch = floats.read(1);
+        this.onGround = handle.getBooleans().read(0);
     }
 
     /**
@@ -23,16 +29,7 @@ public class WrapperPlayClientLook extends AbstractPacket {
      * @return The current Yaw
      */
     public float getYaw() {
-        return handle.getFloat().read(0);
-    }
-
-    /**
-     * Set Yaw.
-     *
-     * @param value - new value.
-     */
-    public void setYaw(float value) {
-        handle.getFloat().write(0, value);
+        return yaw;
     }
 
     /**
@@ -43,16 +40,7 @@ public class WrapperPlayClientLook extends AbstractPacket {
      * @return The current Pitch
      */
     public float getPitch() {
-        return handle.getFloat().read(1);
-    }
-
-    /**
-     * Set Pitch.
-     *
-     * @param value - new value.
-     */
-    public void setPitch(float value) {
-        handle.getFloat().write(1, value);
+        return pitch;
     }
 
     /**
@@ -63,16 +51,6 @@ public class WrapperPlayClientLook extends AbstractPacket {
      * @return The current On Ground
      */
     public boolean getOnGround() {
-        return handle.getBooleans().read(0);
+        return onGround;
     }
-
-    /**
-     * Set On Ground.
-     *
-     * @param value - new value.
-     */
-    public void setOnGround(boolean value) {
-        handle.getBooleans().write(0, value);
-    }
-
 }

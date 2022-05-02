@@ -2,17 +2,25 @@ package me.nik.anticheatbase.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 
-public class WrapperPlayClientPosition extends AbstractPacket {
+public class WrapperPlayClientPosition extends PacketWrapper {
+
     public static final PacketType TYPE = PacketType.Play.Client.POSITION;
 
-    public WrapperPlayClientPosition() {
-        super(new PacketContainer(TYPE), TYPE);
-        handle.getModifier().writeDefaults();
-    }
+    private final double x, y, z;
+    private final boolean onGround;
 
     public WrapperPlayClientPosition(PacketContainer packet) {
         super(packet, TYPE);
+
+        StructureModifier<Double> doubles = handle.getDoubles();
+
+        this.x = doubles.read(0);
+        this.y = doubles.read(1);
+        this.z = doubles.read(2);
+
+        this.onGround = handle.getBooleans().read(0);
     }
 
     /**
@@ -23,16 +31,7 @@ public class WrapperPlayClientPosition extends AbstractPacket {
      * @return The current X
      */
     public double getX() {
-        return handle.getDoubles().read(0);
-    }
-
-    /**
-     * Set X.
-     *
-     * @param value - new value.
-     */
-    public void setX(double value) {
-        handle.getDoubles().write(0, value);
+        return x;
     }
 
     /**
@@ -44,16 +43,7 @@ public class WrapperPlayClientPosition extends AbstractPacket {
      * @return The current FeetY
      */
     public double getY() {
-        return handle.getDoubles().read(1);
-    }
-
-    /**
-     * Set FeetY.
-     *
-     * @param value - new value.
-     */
-    public void setY(double value) {
-        handle.getDoubles().write(1, value);
+        return y;
     }
 
     /**
@@ -64,16 +54,7 @@ public class WrapperPlayClientPosition extends AbstractPacket {
      * @return The current Z
      */
     public double getZ() {
-        return handle.getDoubles().read(2);
-    }
-
-    /**
-     * Set Z.
-     *
-     * @param value - new value.
-     */
-    public void setZ(double value) {
-        handle.getDoubles().write(2, value);
+        return z;
     }
 
     /**
@@ -84,16 +65,6 @@ public class WrapperPlayClientPosition extends AbstractPacket {
      * @return The current On Ground
      */
     public boolean getOnGround() {
-        return handle.getBooleans().read(0);
+        return onGround;
     }
-
-    /**
-     * Set On Ground.
-     *
-     * @param value - new value.
-     */
-    public void setOnGround(boolean value) {
-        handle.getBooleans().write(0, value);
-    }
-
 }

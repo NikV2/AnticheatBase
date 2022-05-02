@@ -1,17 +1,17 @@
 package me.nik.anticheatbase.playerdata.data.impl;
 
-import com.comphenix.protocol.events.PacketContainer;
-import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.managers.profile.Profile;
 import me.nik.anticheatbase.playerdata.data.Data;
 import me.nik.anticheatbase.playerdata.processors.impl.CinematicProcessor;
 import me.nik.anticheatbase.playerdata.processors.impl.SensitivityProcessor;
 import me.nik.anticheatbase.processors.Packet;
+import me.nik.anticheatbase.tasks.TickTask;
+import me.nik.anticheatbase.utils.ChatUtils;
+import me.nik.anticheatbase.utils.MathUtils;
+import me.nik.anticheatbase.utils.versionutils.ClientVersion;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientLook;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientPositionLook;
 
-/**
- * A rotation data class holding every essential information we need when it comes to aim related data.
- */
 public class RotationData implements Data {
 
     private final Profile profile;
@@ -22,39 +22,57 @@ public class RotationData implements Data {
     private float yaw, lastYaw, pitch, lastPitch, deltaYaw, lastDeltaYaw,
             deltaPitch, lastDeltaPitch, yawAccel, lastYawAccel, pitchAccel, lastPitchAccel;
 
+    private int rotationsAfterTeleport, lastRotationTicks;
+
     public RotationData(Profile profile) {
         this.profile = profile;
         this.sensitivityProcessor = new SensitivityProcessor(profile);
         this.cinematicProcessor = new CinematicProcessor(profile);
     }
 
+    private int invalidSnapThreshold;
+
     @Override
     public void process(Packet packet) {
 
-        final PacketContainer container = packet.getPacket();
+        switch (packet.getType()) {
 
-        if (packet.isPositionLook()) {
+            case POSITION_LOOK:
 
-            final WrapperPlayClientPositionLook movePosLook = new WrapperPlayClientPositionLook(container);
+                final WrapperPlayClientPositionLook posLookWrapper = packet.getPositionLookWrapper();
 
-            final float yawPosLook = movePosLook.getYaw();
-            final float pitchPosLook = movePosLook.getPitch();
+                processRotation(posLookWrapper.getYaw(), posLookWrapper.getPitch());
 
-            processRotation(yawPosLook, pitchPosLook);
+                break;
 
-        } else if (packet.isLook()) {
+            case LOOK:
 
-            final WrapperPlayClientLook moveLook = new WrapperPlayClientLook(container);
+                final WrapperPlayClientLook lookWrapper = packet.getLookWrapper();
 
-            final float yawLook = moveLook.getYaw();
-            final float pitchLook = moveLook.getPitch();
+                processRotation(lookWrapper.getYaw(), lookWrapper.getPitch());
 
-            processRotation(yawLook, pitchLook);
+                break;
 
+            case SERVER_POSITION:
+
+                this.rotationsAfterTeleport = 0;
+
+                break;
         }
     }
 
+    public int getRotationsAfterTeleport() {
+        return rotationsAfterTeleport;
+    }
+
     private void processRotation(float yaw, float pitch) {
+
+        //Duplicate rotation packet (1.17+)
+        if (profile.getVersion().isHigherThanOrEquals(ClientVersion.v_1_17)
+                && profile.getTeleportData().getTeleportTicks() > 1
+                && yaw == this.yaw
+                && pitch == this.pitch
+                && profile.getActionData().getLastRidingTicks() > 1) return;
 
         final float lastYaw = this.yaw;
 
@@ -67,7 +85,12 @@ public class RotationData implements Data {
         this.pitch = pitch;
 
         final float lastDeltaYaw = this.deltaYaw;
-        final float deltaYaw = Math.abs(yaw - lastYaw) % 360F;
+
+        /*
+        Clamp the deltaYaw to similarize the behavior between 1.8 -> latest versions of minecraft.
+        (In 1.9 the packet's data is sent differently)
+         */
+        final float deltaYaw = Math.abs(MathUtils.clamp180(Math.abs(yaw - lastYaw)));
 
         this.lastDeltaYaw = lastDeltaYaw;
         this.deltaYaw = deltaYaw;
@@ -90,9 +113,42 @@ public class RotationData implements Data {
         this.lastPitchAccel = lastPitchAccel;
         this.pitchAccel = pitchAccel;
 
+        //Process sensitivity
         this.sensitivityProcessor.process();
 
+        //Process cinematic
         this.cinematicProcessor.process();
+
+        this.rotationsAfterTeleport++;
+
+        this.lastRotationTicks = TickTask.getCurrentTick();
+
+        /*
+        This fixes the infamous bug which gets triggered when moving your client to the side in a small window
+        And makes you snap around insanely fast, This will not affect legitimate players who snap around at any
+        Sensitivity or DPI since it's almost impossible for your deltaYaw to be the same as the rotation constant
+        While the acceleration is also zero for 10 times.
+
+        This bug is very problematic since after it gets triggered all of your rotations will have
+        An identical pattern, Which can lead to exploits, bugs or even falses.
+        (Yes this is more problematic than you think, Due to the way sensitivity works in the minecraft client with the GUI)
+         */
+        if (this.deltaYaw > 10F
+                && this.deltaPitch == 0F
+                && this.yawAccel == 0F
+                && this.deltaYaw == this.sensitivityProcessor.getConstantYaw()
+                && this.rotationsAfterTeleport > 5) {
+
+            if (this.invalidSnapThreshold++ > 10) {
+
+                ChatUtils.log("Kicking " + profile.getPlayer().getName() + " for triggering the snap bug.");
+
+                profile.kick("Invalid Rotation Packet");
+
+                this.invalidSnapThreshold = 0;
+            }
+
+        } else this.invalidSnapThreshold = 0;
     }
 
     public SensitivityProcessor getSensitivityProcessor() {
@@ -149,5 +205,9 @@ public class RotationData implements Data {
 
     public float getLastPitchAccel() {
         return lastPitchAccel;
+    }
+
+    public int getLastRotationTicks() {
+        return MathUtils.elapsedTicks(this.lastRotationTicks);
     }
 }

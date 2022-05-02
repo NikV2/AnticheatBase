@@ -391,4 +391,22 @@ public class CommentedConfigurationSection implements ConfigurationSection {
         this.config.addDefault(s, o);
     }
 
+    @Override
+    public List<String> getComments(String path) {
+        return null;
+    }
+
+    @Override
+    public List<String> getInlineComments(String path) {
+        return null;
+    }
+
+    @Override
+    public void setComments(String path, List<String> comments) {
+    }
+
+    @Override
+    public void setInlineComments(String path, List<String> comments) {
+    }
+
 }

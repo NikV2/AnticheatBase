@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -11,8 +12,6 @@ import java.util.function.Predicate;
  * <p>
  * Obviously this does not include every single Stream method
  * However these methods are much faster than using streams.
- *
- * @author Nik, GTX
  */
 public final class BetterStream {
 
@@ -20,25 +19,78 @@ public final class BetterStream {
     }
 
     public static <T> boolean anyMatch(final Collection<T> data, final Predicate<T> condition) {
-        if (condition == null) return false;
+        if (data == null || condition == null) return false;
 
-        for (final T object : data) {
+        for (final T object : data) if (condition.test(object)) return true;
 
-            if (condition.test(object)) return true;
-        }
+        return false;
+    }
+
+    public static <T> boolean anyMatch(final T[] data, final Predicate<T> condition) {
+        if (data == null || condition == null) return false;
+
+        for (final T object : data) if (condition.test(object)) return true;
 
         return false;
     }
 
     public static <T> boolean allMatch(final Collection<T> data, final Predicate<T> condition) {
-        if (condition == null) return false;
+        if (data == null || condition == null) return false;
+
+        for (final T object : data) if (!condition.test(object)) return false;
+
+        return true;
+    }
+
+    public static <T> boolean allMatch(final T[] data, final Predicate<T> condition) {
+        if (data == null || condition == null) return false;
+
+        for (final T object : data) if (!condition.test(object)) return false;
+
+        return true;
+    }
+
+    public static <T> Collection<T> applyAndGet(final Collection<T> data, final Function<T, T> action) {
+
+        final List<T> list = new LinkedList<>();
+
+        if (action == null || data.isEmpty()) return list;
+
+        for (final T object : data) list.add(action.apply(object));
+
+        return list;
+    }
+
+    public static <T> double mapToDoubleMin(final Collection<T> data, final Function<T, Double> action) {
+
+        if (action == null || data.isEmpty()) return 0D;
+
+        double min = Double.MAX_VALUE;
 
         for (final T object : data) {
 
-            if (!condition.test(object)) return false;
+            final double applied = action.apply(object);
+
+            if (applied < min) min = applied;
         }
 
-        return true;
+        return min;
+    }
+
+    public static <T> double mapToDoubleMax(final Collection<T> data, final Function<T, Double> action) {
+
+        if (action == null || data.isEmpty()) return 0D;
+
+        double max = Double.MIN_VALUE;
+
+        for (final T object : data) {
+
+            final double applied = action.apply(object);
+
+            if (applied > max) max = applied;
+        }
+
+        return max;
     }
 
     public static <T> Collection<T> filter(final Collection<T> data, final Predicate<T> filter) {
@@ -47,10 +99,18 @@ public final class BetterStream {
 
         if (filter == null || data.isEmpty()) return list;
 
-        for (final T object : data) {
+        for (final T object : data) if (filter.test(object)) list.add(object);
 
-            if (filter.test(object)) list.add(object);
-        }
+        return list;
+    }
+
+    public static <T> Collection<T> filter(final T[] data, final Predicate<T> filter) {
+
+        final List<T> list = new LinkedList<>();
+
+        if (filter == null || data.length == 0) return list;
+
+        for (final T object : data) if (filter.test(object)) list.add(object);
 
         return list;
     }
@@ -70,9 +130,7 @@ public final class BetterStream {
 
         double max = Double.MIN_VALUE;
 
-        for (final double val : nums) {
-            if (val > max) max = val;
-        }
+        for (final double val : nums) if (val > max) max = val;
 
         return max;
     }
@@ -82,9 +140,7 @@ public final class BetterStream {
 
         int max = Integer.MIN_VALUE;
 
-        for (final int val : nums) {
-            if (val > max) max = val;
-        }
+        for (final int val : nums) if (val > max) max = val;
 
         return max;
     }
@@ -94,10 +150,7 @@ public final class BetterStream {
 
         long max = Long.MIN_VALUE;
 
-        for (final long val : nums) {
-
-            if (val > max) max = val;
-        }
+        for (final long val : nums) if (val > max) max = val;
 
         return max;
     }
@@ -107,10 +160,7 @@ public final class BetterStream {
 
         float max = Float.MIN_VALUE;
 
-        for (final float val : nums) {
-
-            if (val > max) max = val;
-        }
+        for (final float val : nums) if (val > max) max = val;
 
         return max;
     }
@@ -120,10 +170,7 @@ public final class BetterStream {
 
         double min = Double.MAX_VALUE;
 
-        for (final double val : nums) {
-
-            if (val < min) min = val;
-        }
+        for (final double val : nums) if (val < min) min = val;
 
         return min;
     }
@@ -133,10 +180,7 @@ public final class BetterStream {
 
         int min = Integer.MAX_VALUE;
 
-        for (final int val : nums) {
-
-            if (val < min) min = val;
-        }
+        for (final int val : nums) if (val < min) min = val;
 
         return min;
     }
@@ -146,10 +190,7 @@ public final class BetterStream {
 
         long min = Long.MAX_VALUE;
 
-        for (final long val : nums) {
-
-            if (val < min) min = val;
-        }
+        for (final long val : nums) if (val < min) min = val;
 
         return min;
     }
@@ -159,10 +200,7 @@ public final class BetterStream {
 
         float min = Float.MAX_VALUE;
 
-        for (final float val : nums) {
-
-            if (val < min) min = val;
-        }
+        for (final float val : nums) if (val < min) min = val;
 
         return min;
     }
@@ -172,7 +210,7 @@ public final class BetterStream {
 
         double sum = 0D;
 
-        for (double num : nums) sum += num;
+        for (final double num : nums) sum += num;
 
         return sum;
     }
@@ -182,7 +220,7 @@ public final class BetterStream {
 
         int sum = 0;
 
-        for (int num : nums) sum += num;
+        for (final int num : nums) sum += num;
 
         return sum;
     }
@@ -190,9 +228,9 @@ public final class BetterStream {
     public static long getSumLong(final Collection<Long> nums) {
         if (nums.isEmpty()) return 0L;
 
-        long sum = 0;
+        long sum = 0L;
 
-        for (long num : nums) sum += num;
+        for (final long num : nums) sum += num;
 
         return sum;
     }
@@ -202,7 +240,7 @@ public final class BetterStream {
 
         float sum = 0F;
 
-        for (float num : nums) sum += num;
+        for (final float num : nums) sum += num;
 
         return sum;
     }
@@ -229,5 +267,45 @@ public final class BetterStream {
         if (nums.isEmpty()) return 0F;
 
         return getSumFloat(nums) / nums.size();
+    }
+
+    public static double getAverageDouble(final Collection<Double> nums, final Predicate<Double> condition) {
+        if (nums.isEmpty()) return 0D;
+
+        double sum = 0D;
+
+        for (final double num : nums) if (condition.test(num)) sum += num;
+
+        return sum / nums.size();
+    }
+
+    public static int getAverageInt(final Collection<Integer> nums, final Predicate<Integer> condition) {
+        if (nums.isEmpty()) return 0;
+
+        int sum = 0;
+
+        for (final int num : nums) if (condition.test(num)) sum += num;
+
+        return sum / nums.size();
+    }
+
+    public static long getAverageLong(final Collection<Long> nums, final Predicate<Long> condition) {
+        if (nums.isEmpty()) return 0L;
+
+        long sum = 0L;
+
+        for (final long num : nums) if (condition.test(num)) sum += num;
+
+        return sum / nums.size();
+    }
+
+    public static float getAverageFloat(final Collection<Float> nums, final Predicate<Float> condition) {
+        if (nums.isEmpty()) return 0F;
+
+        float sum = 0F;
+
+        for (final float num : nums) if (condition.test(num)) sum += num;
+
+        return sum / nums.size();
     }
 }

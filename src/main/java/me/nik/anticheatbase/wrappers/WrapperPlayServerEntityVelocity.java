@@ -6,7 +6,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
-public class WrapperPlayServerEntityVelocity extends AbstractPacket {
+public class WrapperPlayServerEntityVelocity extends PacketWrapper {
     public static final PacketType TYPE =
             PacketType.Play.Server.ENTITY_VELOCITY;
 

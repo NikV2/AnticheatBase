@@ -1,8 +1,8 @@
 package me.nik.anticheatbase.listeners;
 
 import me.nik.anticheatbase.Anticheat;
+import me.nik.anticheatbase.enums.Permissions;
 import me.nik.anticheatbase.files.Config;
-import me.nik.anticheatbase.manager.impl.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
- * A profile listener that we'll use in order to initialize our player profile
+ * A profile listener that we'll use in order to initialize our player profile.
  */
 public class ProfileListener implements Listener {
 
@@ -23,12 +23,12 @@ public class ProfileListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent e) {
+
         final Player player = e.getPlayer();
 
         this.plugin.getProfileManager().createProfile(player);
 
-        if (Config.Setting.TOGGLE_ALERTS_ON_JOIN.getBoolean()
-                && player.hasPermission(Permissions.COMMAND_ALERTS.getPermission())) {
+        if (Config.Setting.TOGGLE_ALERTS_ON_JOIN.getBoolean() && player.hasPermission(Permissions.COMMAND_ALERTS.getPermission())) {
 
             this.plugin.getAlertManager().addPlayerToAlerts(player.getUniqueId());
         }

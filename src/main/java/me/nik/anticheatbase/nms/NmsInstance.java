@@ -9,6 +9,10 @@ import org.bukkit.inventory.ItemStack;
 
 public interface NmsInstance {
 
+    float getAttackCooldown(Player player);
+
+    boolean isChunkLoaded(World world, int x, int z);
+
     Material getType(Block block);
 
     Entity[] getChunkEntities(World world, int x, int z);
@@ -32,6 +36,8 @@ public interface NmsInstance {
     ItemStack getItemInMainHand(Player player);
 
     ItemStack getItemInOffHand(Player player);
+
+    float getWalkSpeed(Player player);
 
     float getAttributeSpeed(Player player);
 

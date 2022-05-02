@@ -2,23 +2,44 @@ package me.nik.anticheatbase.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction;
 import me.nik.anticheatbase.utils.ServerUtils;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
-public class WrapperPlayClientUseEntity extends AbstractPacket {
+public class WrapperPlayClientUseEntity extends PacketWrapper {
+
     public static final PacketType TYPE = PacketType.Play.Client.USE_ENTITY;
 
-    public WrapperPlayClientUseEntity() {
-        super(new PacketContainer(TYPE), TYPE);
-        handle.getModifier().writeDefaults();
-    }
+    private final int targetId;
+    private final EnumWrappers.EntityUseAction type;
+    private Vector targetVector;
 
     public WrapperPlayClientUseEntity(PacketContainer packet) {
         super(packet, TYPE);
+
+        this.targetId = handle.getIntegers().read(0);
+
+        EnumWrappers.EntityUseAction action;
+
+        if (ServerUtils.isCavesUpdate()) {
+
+            WrappedEnumEntityUseAction enumEntityUseAction = handle.getEnumEntityUseActions().read(0);
+
+            if ((action = enumEntityUseAction.getAction()) == EnumWrappers.EntityUseAction.INTERACT_AT) {
+
+                this.targetVector = enumEntityUseAction.getPosition();
+            }
+
+        } else {
+
+            if ((action = handle.getEntityUseActions().read(0)) == EnumWrappers.EntityUseAction.INTERACT_AT) {
+
+                this.targetVector = handle.getVectors().read(0);
+            }
+        }
+
+        this.type = action;
     }
 
     /**
@@ -27,49 +48,7 @@ public class WrapperPlayClientUseEntity extends AbstractPacket {
      * @return The current entity ID
      */
     public int getTargetID() {
-        return handle.getIntegers().read(0);
-    }
-
-    /**
-     * Set entity ID of the target.
-     *
-     * @param value - new value.
-     */
-    public void setTargetID(int value) {
-        handle.getIntegers().write(0, value);
-    }
-
-    /**
-     * Retrieve the entity that was targeted.
-     *
-     * @param world - the current world of the entity.
-     * @return The targeted entity.
-     * <p>
-     * Throws async catcher in 1.17, Please do not use me!
-     */
-    public Entity getTarget(World world) {
-        return handle.getEntityModifier(world).read(0);
-    }
-
-    /**
-     * Retrieve the entity that was targeted.
-     *
-     * @param event - the packet event.
-     * @return The targeted entity.
-     * <p>
-     * Throws async catcher in 1.17, Please do not use me!
-     */
-    public Entity getTarget(PacketEvent event) {
-        return getTarget(event.getPlayer().getWorld());
-    }
-
-    /*
-     * Thanks ProtocolLib!
-     */
-    public static EnumWrappers.EntityUseAction getEntityUseAction(PacketContainer packet) {
-        return ServerUtils.isCavesUpdate()
-                ? packet.getEnumEntityUseActions().read(0).getAction()
-                : packet.getEntityUseActions().read(0);
+        return targetId;
     }
 
     /**
@@ -78,35 +57,18 @@ public class WrapperPlayClientUseEntity extends AbstractPacket {
      * @return The current Type
      */
     public EnumWrappers.EntityUseAction getType() {
-        return getEntityUseAction(handle);
-    }
-
-    /**
-     * Set Type.
-     *
-     * @param value - new value.
-     */
-    public void setType(EnumWrappers.EntityUseAction value) {
-        handle.getEntityUseActions().write(0, value);
+        return type;
     }
 
     /**
      * Retrieve the target vector.
      * <p>
-     * Notes: Only if {@link #getType()} is {@link EnumWrappers.EntityUseAction#INTERACT_AT}.
+     * Notes: Only if {@link #getType()} is {@link EnumWrappers.EntityUseAction#INTERACT_AT}, Make sure the {@link #getType()} method
+     * Has been called first.
      *
      * @return The target vector or null
      */
     public Vector getTargetVector() {
-        return handle.getVectors().read(0);
-    }
-
-    /**
-     * Set the target vector.
-     *
-     * @param value - new value.
-     */
-    public void setTargetVector(Vector value) {
-        handle.getVectors().write(0, value);
+        return targetVector;
     }
 }

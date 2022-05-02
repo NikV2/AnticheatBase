@@ -2,7 +2,7 @@ package me.nik.anticheatbase.commands;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.commands.subcommands.AlertsCommand;
-import me.nik.anticheatbase.manager.impl.MsgType;
+import me.nik.anticheatbase.enums.MsgType;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * A command manager class that we'll be using in order to make creating and using commands
- * Much easier and cleaner.
+ * Much easier and simple.
  */
 public class CommandManager implements TabExecutor {
 
@@ -27,9 +27,13 @@ public class CommandManager implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
         if (args.length > 0) {
+
             for (SubCommand subCommand : this.subCommands) {
+
                 if (args[0].equalsIgnoreCase(subCommand.getName())) {
+
                     if (!subCommand.canConsoleExecute() && sender instanceof ConsoleCommandSender) {
                         sender.sendMessage(MsgType.CONSOLE_COMMANDS.getMessage());
                         return true;

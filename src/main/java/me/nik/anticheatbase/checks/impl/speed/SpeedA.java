@@ -1,16 +1,14 @@
 package me.nik.anticheatbase.checks.impl.speed;
 
-import me.nik.anticheatbase.checks.annotations.Experimental;
 import me.nik.anticheatbase.checks.enums.CheckType;
-import me.nik.anticheatbase.checks.types.PacketCheck;
-import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.checks.types.Check;
+import me.nik.anticheatbase.managers.profile.Profile;
 import me.nik.anticheatbase.playerdata.data.impl.MovementData;
 import me.nik.anticheatbase.processors.Packet;
 
-@Experimental
-public class SpeedA extends PacketCheck {
+public class SpeedA extends Check {
     public SpeedA(Profile profile) {
-        super(profile, CheckType.SPEED, "A", "Checks for speed");
+        super(profile, CheckType.SPEED, "A", "Checks for speed", 5);
     }
 
     @Override
@@ -21,12 +19,12 @@ public class SpeedA extends PacketCheck {
 
         MovementData data = profile.getMovementData();
 
-        if (data.getDeltaXZ() > 0D) {
+        if (data.getDeltaXZ() > Double.MIN_VALUE) {
 
-            if (increaseBuffer() > 100) fail(
+            if (increaseBuffer() > maxBuffer()) fail(
                     "FLAGGED BY THE BEST SPEED CHECK EVER IN EXISTENCE, Credits to Elon Musk."
             );
 
-        } else decreaseBufferBy(Double.MIN_VALUE);
+        } else decreaseBufferBy(Float.MIN_VALUE);
     }
 }

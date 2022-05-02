@@ -1,7 +1,7 @@
 package me.nik.anticheatbase.utils.custom.desync;
 
 import me.nik.anticheatbase.Anticheat;
-import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.managers.profile.Profile;
 import me.nik.anticheatbase.tasks.TickTask;
 import me.nik.anticheatbase.utils.MathUtils;
 import org.bukkit.Bukkit;

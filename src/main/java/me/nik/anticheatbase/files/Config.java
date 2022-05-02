@@ -2,7 +2,7 @@ package me.nik.anticheatbase.files;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.files.commentedfiles.CommentedFileConfiguration;
-import me.nik.anticheatbase.manager.Initializer;
+import me.nik.anticheatbase.managers.Initializer;
 
 import java.io.File;
 import java.util.List;
@@ -39,7 +39,7 @@ public class Config implements Initializer {
     }
 
     @Override
-    public void init() {
+    public void initialize() {
 
         File configFile = new File(this.plugin.getDataFolder(), "config.yml");
 
@@ -71,9 +71,13 @@ public class Config implements Initializer {
     public enum Setting {
         SERVER_NAME("server_name", "Server", "The server name that will be shown in Player Logs"),
 
+        THEME("theme", "default", "The theme that the anticheat is going to use"),
+
         TOGGLE_ALERTS_ON_JOIN("toggle_alerts_on_join", true, "Should we enable alerts for admins when they join?"),
 
         DISABLE_BYPASS_PERMISSION("disable_bypass_permission", true, "Should we disable the bypass permission?", "Disable this for some perfomance gain"),
+
+        GHOST_MODE("ghost_mode", true, "Should we enable the Ghost Mode?", "If enabled the Anticheat will use Setbacks for movement related checks"),
 
         CHECK_SETTINGS("check_settings", "", "Check Settings"),
         CHECK_SETTINGS_ALERT_CONSOLE("check_settings.alert_console", false, "Should we also send alerts in console?"),

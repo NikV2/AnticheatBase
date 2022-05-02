@@ -1,6 +1,6 @@
 package me.nik.anticheatbase.playerdata.processors.impl;
 
-import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.managers.profile.Profile;
 import me.nik.anticheatbase.playerdata.data.impl.RotationData;
 import me.nik.anticheatbase.playerdata.processors.Processor;
 import me.nik.anticheatbase.utils.MathUtils;

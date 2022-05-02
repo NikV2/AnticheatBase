@@ -1,13 +1,20 @@
 package me.nik.anticheatbase.processors.listeners;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import me.nik.anticheatbase.Anticheat;
-import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.managers.profile.Profile;
 import me.nik.anticheatbase.processors.Packet;
+import me.nik.anticheatbase.utils.ChatUtils;
+import me.nik.anticheatbase.utils.MoveUtils;
+import me.nik.anticheatbase.utils.TaskUtils;
+import me.nik.anticheatbase.wrappers.WrapperPlayClientLook;
+import me.nik.anticheatbase.wrappers.WrapperPlayClientPosition;
+import me.nik.anticheatbase.wrappers.WrapperPlayClientPositionLook;
 import me.nik.anticheatbase.wrappers.WrapperPlayServerEntityVelocity;
 import org.bukkit.entity.Player;
 
@@ -65,8 +72,10 @@ public class NetworkListener extends PacketAdapter {
             PacketType.Play.Server.ABILITIES,
             PacketType.Play.Server.POSITION,
             PacketType.Play.Server.PING,
-            PacketType.Play.Server.TRANSACTION
-
+            PacketType.Play.Server.TRANSACTION,
+            PacketType.Play.Server.REMOVE_ENTITY_EFFECT,
+            PacketType.Play.Server.ENTITY_EFFECT,
+            PacketType.Play.Server.UPDATE_ATTRIBUTES
             /*
             Remove any packets that are not supported
             In the current server version.
@@ -78,11 +87,13 @@ public class NetworkListener extends PacketAdapter {
     ).filter(PacketType::isSupported).collect(Collectors.toList()));
 
     public NetworkListener(Anticheat plugin) {
-        super(plugin, ListenerPriority.MONITOR, WHITELISTED_PACKETS);
+        super(plugin, ListenerPriority.LOWEST, WHITELISTED_PACKETS);
 
         this.plugin = plugin;
 
-        //No need to keep those
+        ProtocolLibrary.getProtocolManager().addPacketListener(this);
+
+        //Clear cache
         WHITELISTED_PACKETS.clear();
     }
 
@@ -90,36 +101,135 @@ public class NetworkListener extends PacketAdapter {
     public void onPacketReceiving(PacketEvent e) {
         if (e.isPlayerTemporary() || e.getPlayer() == null) return;
 
-        final Profile profile = this.plugin.getProfileManager().getProfile(e.getPlayer());
+        final Player player = e.getPlayer();
+
+        final Packet packet = new Packet(e.getPacket(), System.currentTimeMillis());
+
+        /*
+        Check for server crashers - exploit attempts
+        We have to do this on the netty thread in order to cancel the packet
+         */
+        final String crashAttempt = checkCrasher(packet);
+
+        if (crashAttempt != null) {
+
+            e.setCancelled(true);
+
+            ChatUtils.log("Kicking " + player.getName() + " for attempting to crash the server, Module: " + crashAttempt);
+
+            //Kick the player on the main thread
+            TaskUtils.task(() -> player.kickPlayer("Invalid Packet"));
+
+            return;
+        }
+
+        final Profile profile = this.plugin.getProfileManager().getProfile(player);
 
         if (profile == null) return;
 
-        profile.getProfileThread().execute(() -> profile.handlePacket(new Packet(e.getPacket())));
+        profile.getProfileThread().execute(() -> profile.handle(packet));
     }
 
     @Override
     public void onPacketSending(PacketEvent e) {
         if (e.isPlayerTemporary() || e.getPlayer() == null) return;
 
-        final Player p = e.getPlayer();
+        final Player player = e.getPlayer();
 
-        final Profile profile = this.plugin.getProfileManager().getProfile(p);
+        final Profile profile = this.plugin.getProfileManager().getProfile(player);
 
         if (profile == null) return;
 
-        final int id = p.getEntityId();
+        final PacketContainer container = e.getPacket();
 
-        final PacketContainer packet = e.getPacket();
+        final Packet packet = new Packet(container, System.currentTimeMillis());
 
-        final PacketType type = e.getPacketType();
+        /*
+        ---------------------------------------------------------------------------
+        Validate serverbound packets to make sure they're being sent to the player
+        ---------------------------------------------------------------------------
+         */
+        final int playerId = player.getEntityId();
 
-        if (type == PacketType.Play.Server.ENTITY_VELOCITY) {
+        switch (packet.getType()) {
 
-            final WrapperPlayServerEntityVelocity velocity = new WrapperPlayServerEntityVelocity(packet);
+            case SERVER_ENTITY_VELOCITY:
 
-            if (velocity.getEntityID() != id) return;
+                final WrapperPlayServerEntityVelocity velocity = new WrapperPlayServerEntityVelocity(container);
+
+                if (velocity.getEntityID() != playerId) return;
+
+                break;
+
+                /*
+                Validate more
+                 */
+        }
+        /*
+        ---------------------------------------------------------------------------
+         */
+
+        profile.getProfileThread().execute(() -> profile.handle(packet));
+    }
+
+    private String checkCrasher(Packet packet) {
+
+        double x = 0D, y = 0D, z = 0D;
+        float yaw = 0F, pitch = 0F;
+
+        switch (packet.getType()) {
+
+            case POSITION:
+
+                WrapperPlayClientPosition pos = packet.getPositionWrapper();
+
+                x = Math.abs(pos.getX());
+                y = Math.abs(pos.getY());
+                z = Math.abs(pos.getZ());
+
+                break;
+
+            case POSITION_LOOK:
+
+                WrapperPlayClientPositionLook posLook = packet.getPositionLookWrapper();
+
+                x = Math.abs(posLook.getX());
+                y = Math.abs(posLook.getY());
+                z = Math.abs(posLook.getZ());
+                yaw = Math.abs(posLook.getYaw());
+                pitch = Math.abs(posLook.getPitch());
+
+                break;
+
+            case LOOK:
+
+                WrapperPlayClientLook look = packet.getLookWrapper();
+
+                yaw = Math.abs(look.getYaw());
+                pitch = Math.abs(look.getPitch());
+
+                break;
         }
 
-        profile.getProfileThread().execute(() -> profile.handlePacket(new Packet(packet)));
+        final double invalidValue = 3.0E7D;
+
+        //This messes our threading system and potentially causes damage to the server.
+        final boolean invalid = x > invalidValue || y > invalidValue || z > invalidValue
+                || yaw > 3.4028235e+35F
+                || pitch > MoveUtils.MAXIMUM_PITCH;
+
+        //It's impossible for these values to be NaN or Infinite.
+        final boolean impossible = !Double.isFinite(x)
+                || !Double.isFinite(y)
+                || !Double.isFinite(z)
+                || !Float.isFinite(yaw)
+                || !Float.isFinite(pitch);
+
+        if (invalid || impossible) {
+
+            return "Invalid Position, X: " + x + " Y: " + y + " Z: " + z + " Yaw: " + yaw + " Pitch: " + pitch;
+        }
+
+        return null;
     }
 }

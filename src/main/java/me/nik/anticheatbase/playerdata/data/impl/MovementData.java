@@ -1,140 +1,154 @@
 package me.nik.anticheatbase.playerdata.data.impl;
 
-import com.comphenix.protocol.events.PacketContainer;
-import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.Anticheat;
+import me.nik.anticheatbase.managers.profile.Profile;
+import me.nik.anticheatbase.nms.NmsInstance;
 import me.nik.anticheatbase.playerdata.data.Data;
+import me.nik.anticheatbase.playerdata.processors.impl.SetbackProcessor;
 import me.nik.anticheatbase.processors.Packet;
 import me.nik.anticheatbase.utils.CollisionUtils;
-import me.nik.anticheatbase.utils.MathUtils;
-import me.nik.anticheatbase.utils.custom.Effects;
+import me.nik.anticheatbase.utils.MoveUtils;
+import me.nik.anticheatbase.utils.custom.CustomLocation;
 import me.nik.anticheatbase.utils.custom.Equipment;
 import me.nik.anticheatbase.utils.fastmath.FastMath;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientLook;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientPosition;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientPositionLook;
-import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-/**
- * A action data class holding every essential information we need when it comes to player actions.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class MovementData implements Data {
 
     private final Profile profile;
 
-    private final Effects effects;
-
     private final Equipment equipment;
+
+    private final SetbackProcessor setbackProcessor;
 
     private double deltaX, lastDeltaX, deltaZ, lastDeltaZ, deltaY, lastDeltaY, deltaXZ, lastDeltaXZ,
             accelXZ, lastAccelXZ, accelY, lastAccelY;
 
-    private Location location, lastLocation;
+    private float fallDistance, lastFallDistance,
+            baseGroundSpeed, baseAirSpeed,
+            frictionFactor = MoveUtils.FRICTION_FACTOR, lastFrictionFactor = MoveUtils.FRICTION_FACTOR;
+
+    private CustomLocation location, lastLocation;
+
+    private List<Material> nearbyBlocks = new ArrayList<>();
 
     private boolean onGround, lastOnGround, serverGround, lastServerGround;
 
-    private int flyTicks, serverGroundTicks, lastServerGroundTicks, clientGroundTicks;
+    private int flyTicks, serverGroundTicks, lastServerGroundTicks, nearGroundTicks, lastNearGroundTicks,
+            lastUnloadedChunkTicks = 100,
+            clientGroundTicks, lastNearWallTicks,
+            lastFrictionFactorUpdateTicks, lastNearEdgeTicks;
 
     public MovementData(Profile profile) {
         this.profile = profile;
 
-        this.effects = new Effects();
         this.equipment = new Equipment();
+        this.setbackProcessor = new SetbackProcessor(profile);
+
+        /*
+        Initialize the current location.
+         */
+        this.location = this.lastLocation = new CustomLocation(profile.getPlayer().getLocation());
     }
 
     @Override
     public void process(Packet packet) {
 
-        final Player p = profile.getPlayer();
+        final World world = profile.getPlayer().getWorld();
 
-        if (p == null) return;
+        final long currentTime = packet.getTimeStamp();
 
-        final World world = p.getWorld();
+        switch (packet.getType()) {
 
-        final PacketContainer container = packet.getPacket();
+            case POSITION:
 
-        if (packet.isPosition()) {
+                final WrapperPlayClientPosition move = packet.getPositionWrapper();
 
-            final WrapperPlayClientPosition move = new WrapperPlayClientPosition(container);
+                this.lastOnGround = this.onGround;
+                this.onGround = move.getOnGround();
 
-            double x = move.getX();
-            double y = move.getY();
-            double z = move.getZ();
-            float yaw = getLocation().getYaw();
-            float pitch = getLocation().getPitch();
-            boolean onGround = move.getOnGround();
+                this.flyTicks = this.onGround ? 0 : this.flyTicks + 1;
+                this.clientGroundTicks = this.onGround ? this.clientGroundTicks + 1 : 0;
 
-            this.lastOnGround = this.onGround;
-            this.onGround = onGround;
+                this.lastLocation = this.location;
+                this.location = new CustomLocation(
+                        world,
+                        move.getX(), move.getY(), move.getZ(),
+                        this.location.getYaw(), this.location.getPitch(),
+                        currentTime
+                );
 
-            this.flyTicks = onGround ? 0 : this.flyTicks + 1;
-            this.clientGroundTicks = onGround ? this.clientGroundTicks + 1 : 0;
+                processLocationData();
 
-            Location location = new Location(world, x, y, z, yaw, pitch);
-            Location lastLocation = getLocation() != null ? getLocation() : location;
+                break;
 
-            processLocation(lastLocation, location);
+            case POSITION_LOOK:
 
-        } else if (packet.isPositionLook()) {
+                //1.17+
+                if (profile.getActionData().getLastDuplicateOnePointSeventeenPacketTicks() == 0) break;
 
-            final WrapperPlayClientPositionLook movePosLook = new WrapperPlayClientPositionLook(container);
+                final WrapperPlayClientPositionLook posLook = packet.getPositionLookWrapper();
 
-            double xPosLook = movePosLook.getX();
-            double yPosLook = movePosLook.getY();
-            double zPosLook = movePosLook.getZ();
-            float yawPosLook = movePosLook.getYaw();
-            float pitchPosLook = movePosLook.getPitch();
-            boolean onGroundPosLook = movePosLook.getOnGround();
+                this.lastOnGround = this.onGround;
+                this.onGround = posLook.getOnGround();
 
-            this.lastOnGround = this.onGround;
-            this.onGround = onGroundPosLook;
+                this.flyTicks = this.onGround ? 0 : this.flyTicks + 1;
+                this.clientGroundTicks = this.onGround ? this.clientGroundTicks + 1 : 0;
 
-            this.flyTicks = onGroundPosLook ? 0 : this.flyTicks + 1;
-            this.clientGroundTicks = onGroundPosLook ? this.clientGroundTicks + 1 : 0;
+                this.lastLocation = this.location;
+                this.location = new CustomLocation(
+                        world,
+                        posLook.getX(), posLook.getY(), posLook.getZ(),
+                        posLook.getYaw(), posLook.getPitch(),
+                        currentTime
+                );
 
-            Location locationPosLook = new Location(world, xPosLook, yPosLook, zPosLook, yawPosLook, pitchPosLook);
-            Location lastLocationPosLook = getLocation() != null ? getLocation() : locationPosLook;
+                processLocationData();
 
-            processLocation(lastLocationPosLook, locationPosLook);
+                break;
 
-        } else if (packet.isLook()) {
+            case LOOK:
 
-            final WrapperPlayClientLook moveLook = new WrapperPlayClientLook(container);
+                final WrapperPlayClientLook look = packet.getLookWrapper();
 
-            double xLook = getLocation().getX();
-            double yLook = getLocation().getY();
-            double zLook = getLocation().getZ();
-            float yawLook = moveLook.getYaw();
-            float pitchLook = moveLook.getPitch();
-            boolean onGroundLook = moveLook.getOnGround();
+                this.lastOnGround = this.onGround;
+                this.onGround = look.getOnGround();
 
-            this.lastOnGround = this.onGround;
-            this.onGround = onGroundLook;
+                this.flyTicks = this.onGround ? 0 : this.flyTicks + 1;
+                this.clientGroundTicks = this.onGround ? this.clientGroundTicks + 1 : 0;
 
-            this.flyTicks = onGroundLook ? 0 : this.flyTicks + 1;
-            this.clientGroundTicks = onGroundLook ? this.clientGroundTicks + 1 : 0;
+                this.lastLocation = this.location;
+                this.location = new CustomLocation(
+                        world,
+                        this.location.getX(), this.location.getY(), this.location.getZ(),
+                        look.getYaw(), look.getPitch(),
+                        currentTime
+                );
 
-            Location locationLook = new Location(world, xLook, yLook, zLook, yawLook, pitchLook);
-            Location lastLocationLook = getLocation() != null ? getLocation() : locationLook;
+                processLocationData();
 
-            processLocation(lastLocationLook, locationLook);
+                break;
         }
     }
 
-    private void processLocation(Location from, Location to) {
-
-        this.lastLocation = from;
-        this.location = to;
+    private void processLocationData() {
 
         final double lastDeltaX = this.deltaX;
-        final double deltaX = to.getX() - from.getX();
+        final double deltaX = this.location.getX() - this.lastLocation.getX();
 
         this.lastDeltaX = lastDeltaX;
         this.deltaX = deltaX;
 
         final double lastDeltaY = this.deltaY;
-        final double deltaY = to.getY() - from.getY();
+        final double deltaY = this.location.getY() - this.lastLocation.getY();
 
         this.lastDeltaY = lastDeltaY;
         this.deltaY = deltaY;
@@ -146,7 +160,7 @@ public class MovementData implements Data {
         this.accelY = accelY;
 
         final double lastDeltaZ = this.deltaZ;
-        final double deltaZ = to.getZ() - from.getZ();
+        final double deltaZ = this.location.getZ() - this.lastLocation.getZ();
 
         this.lastDeltaZ = lastDeltaZ;
         this.deltaZ = deltaZ;
@@ -163,46 +177,80 @@ public class MovementData implements Data {
         this.lastAccelXZ = lastAccelXZ;
         this.accelXZ = accelXZ;
 
-        processPlayerData(to);
+        //Process data
+        processPlayerData();
     }
 
-    private void handleNearbyBlocks(Location location) {
+    private void handleNearbyBlocks() {
 
         /*
-        Handle collisions here
+        Get the nearby block result from the current location.
+         */
+        final CollisionUtils.NearbyBlocksResult nearbyBlocksResult = CollisionUtils.getNearbyBlocks(this.location, false);
 
-        NOTE: It's recommended to run a single big loop instead of multiple ones in order to grab collisions + nearby blocks
-        Doing it multiple times within a tick can be insanely heavy on big playercounts.
-
-        I'd also recommend using NMS when getting the block + block type off the main thread due to it
-        Being insanely heavy in 1.9+ servers, And is generally faster.
+        /*
+        Handle collisions
+        NOTE: You should ALWAYS use NMS if you plan on supporting 1.9+
+        For a production server, DO NOT use spigot's api. It's slow. (Especially for Blocks, Chunks, Materials)
          */
     }
 
-    private void processPlayerData(Location location) {
-
-        //Save up some perfomance
-
-        if (this.deltaXZ == 0D && this.deltaY == 0D) return;
-
-        //Make sure the player is not null
+    private void processPlayerData() {
 
         final Player p = profile.getPlayer();
 
-        if (p == null) return;
+        NmsInstance nms = Anticheat.getInstance().getNmsManager().getNmsInstance();
 
-        if (!CollisionUtils.isChunkUnloaded(location)) {
+        //Chunk
+
+        if ((this.lastUnloadedChunkTicks = nms.isChunkLoaded(
+                this.location.getWorld(), this.location.getBlockX(), this.location.getBlockZ())
+                ? this.lastUnloadedChunkTicks + 1 : 0) > 10) {
+
+            //Nearby Entities
+
+            //this.nearbyEntityProcessor.process();
 
             //Nearby Blocks
 
-            handleNearbyBlocks(location);
+            handleNearbyBlocks();
+
+            //Friction Factor
+
+            this.frictionFactor = CollisionUtils.getBlockSlipperiness(
+                    nms.getType(this.location.clone().subtract(0D, .825D, 0D).getBlock())
+            );
+
+            this.lastFrictionFactorUpdateTicks = this.frictionFactor != this.lastFrictionFactor ? 0 : this.lastFrictionFactorUpdateTicks + 1;
+
+            this.lastFrictionFactor = this.frictionFactor;
         }
+
+        //Effects
+
+        //this.effectsProcessor.process();
+
+        //Custom Speed
+
+        //this.customSpeedProcessor.process();
+
+        //Setbacks
+
+        if (this.nearGroundTicks > 1) this.setbackProcessor.process();
+
+        //Near Wall
+
+        this.lastNearWallTicks = CollisionUtils.isNearWall(this.location) ? 0 : this.lastNearWallTicks + 1;
+
+        //Near Edge
+
+        this.lastNearEdgeTicks = this.lastNearGroundTicks == 0 && CollisionUtils.isNearEdge(this.location) ? 0 : this.lastNearEdgeTicks + 1;
 
         //Server Ground
 
         final boolean lastServerGround = this.serverGround;
 
-        final boolean serverGround = location.getY() % MathUtils.SERVER_GROUND_DIVISOR < .0001D;
+        final boolean serverGround = CollisionUtils.isServerGround(this.location.getY());
 
         this.lastServerGround = lastServerGround;
 
@@ -212,26 +260,61 @@ public class MovementData implements Data {
 
         this.lastServerGroundTicks = serverGround ? 0 : this.lastServerGroundTicks + 1;
 
-        //Effects
-
-        this.effects.handle(p);
-
         //Equipment
 
         this.equipment.handle(p);
+
+        //Fall Distance
+
+        this.lastFallDistance = this.fallDistance;
+
+        this.fallDistance = nms.getFallDistance(p);
+
+        //Base Speed
+
+        this.baseGroundSpeed = MoveUtils.getBaseGroundSpeed(profile);
+
+        this.baseAirSpeed = MoveUtils.getBaseAirSpeed(profile);
+
+        //Ghost Blocks
+
+        //this.ghostBlockProcessor.process();
     }
 
-    //Handle it like the client instead of exempting for teleports on movement checks
-    public void handleTeleport() {
-        this.deltaXZ = 0D;
+    public int getLastNearEdgeTicks() {
+        return lastNearEdgeTicks;
+    }
+
+    public int getLastFrictionFactorUpdateTicks() {
+        return lastFrictionFactorUpdateTicks;
+    }
+
+    public float getFrictionFactor() {
+        return frictionFactor;
     }
 
     public Equipment getEquipment() {
         return equipment;
     }
 
+    public float getBaseAirSpeed() {
+        return baseAirSpeed;
+    }
+
+    public float getBaseGroundSpeed() {
+        return baseGroundSpeed;
+    }
+
+    public int getLastNearWallTicks() {
+        return lastNearWallTicks;
+    }
+
     public int getClientGroundTicks() {
         return clientGroundTicks;
+    }
+
+    public int getLastUnloadedChunkTicks() {
+        return lastUnloadedChunkTicks;
     }
 
     public double getDeltaX() {
@@ -282,20 +365,24 @@ public class MovementData implements Data {
         return lastAccelY;
     }
 
-    public Location getLocation() {
-        if (this.location == null) this.location = profile.getPlayer().getLocation();
-
-        return this.location;
+    public float getFallDistance() {
+        return fallDistance;
     }
 
-    public Effects getEffects() {
-        return effects;
+    public float getLastFallDistance() {
+        return lastFallDistance;
     }
 
-    public Location getLastLocation() {
-        if (this.lastLocation == null) this.lastLocation = profile.getPlayer().getLocation();
+    public CustomLocation getLocation() {
+        return location;
+    }
 
-        return this.lastLocation;
+    public CustomLocation getLastLocation() {
+        return lastLocation;
+    }
+
+    public SetbackProcessor getSetbackProcessor() {
+        return setbackProcessor;
     }
 
     public boolean isOnGround() {
@@ -324,5 +411,17 @@ public class MovementData implements Data {
 
     public boolean isLastServerGround() {
         return lastServerGround;
+    }
+
+    public int getNearGroundTicks() {
+        return nearGroundTicks;
+    }
+
+    public int getLastNearGroundTicks() {
+        return lastNearGroundTicks;
+    }
+
+    public List<Material> getNearbyBlocks() {
+        return nearbyBlocks;
     }
 }

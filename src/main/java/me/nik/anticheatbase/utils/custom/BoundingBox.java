@@ -1,5 +1,6 @@
 package me.nik.anticheatbase.utils.custom;
 
+import me.nik.anticheatbase.utils.ServerUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -19,12 +20,20 @@ public class BoundingBox {
     }
 
     public static BoundingBox fromBukkit(Entity entity) {
+        /*
+        Not supported in legacy versions
+         */
+        if (ServerUtils.isLegacy()) return null;
+
         org.bukkit.util.BoundingBox bukkitBox = entity.getBoundingBox();
 
-        return new BoundingBox(bukkitBox.getMinX(), bukkitBox.getMinY(), bukkitBox.getMinZ(), bukkitBox.getMaxX(), bukkitBox.getMaxY(), bukkitBox.getMaxZ());
+        return new BoundingBox(
+                bukkitBox.getMinX(), bukkitBox.getMinY(), bukkitBox.getMinZ(),
+                bukkitBox.getMaxX(), bukkitBox.getMaxY(), bukkitBox.getMaxZ()
+        );
     }
 
-    public static BoundingBox fromPlayerLocation(Location loc) {
+    public static BoundingBox fromPlayerLocation(CustomLocation loc) {
 
         final double x = loc.getX();
         final double y = loc.getY();
@@ -123,13 +132,13 @@ public class BoundingBox {
 
         if (dirX >= 0.0D) {
 
-            tMin = (getMinX() - startX) * divX;
-            tMax = (getMaxX() - startX) * divX;
+            tMin = (this.minX - startX) * divX;
+            tMax = (this.maxX - startX) * divX;
 
         } else {
 
-            tMin = (getMaxX() - startX) * divX;
-            tMax = (getMinX() - startX) * divX;
+            tMin = (this.maxX - startX) * divX;
+            tMax = (this.minX - startX) * divX;
         }
 
         double tyMin;
@@ -137,13 +146,13 @@ public class BoundingBox {
 
         if (dirY >= 0.0D) {
 
-            tyMin = (getMinY() - startY) * divY;
-            tyMax = (getMaxY() - startY) * divY;
+            tyMin = (this.minY - startY) * divY;
+            tyMax = (this.maxY - startY) * divY;
 
         } else {
 
-            tyMin = (getMaxY() - startY) * divY;
-            tyMax = (getMinY() - startY) * divY;
+            tyMin = (this.maxY - startY) * divY;
+            tyMax = (this.minY - startY) * divY;
         }
 
         if (tMin <= tyMax && tMax >= tyMin) {
@@ -161,13 +170,13 @@ public class BoundingBox {
 
             if (dirZ >= 0.0D) {
 
-                tzMin = (getMinZ() - startZ) * divZ;
-                tzMax = (getMaxZ() - startZ) * divZ;
+                tzMin = (this.minZ - startZ) * divZ;
+                tzMax = (this.maxZ - startZ) * divZ;
 
             } else {
 
-                tzMin = (getMaxZ() - startZ) * divZ;
-                tzMax = (getMinZ() - startZ) * divZ;
+                tzMin = (this.maxZ - startZ) * divZ;
+                tzMax = (this.minZ - startZ) * divZ;
 
             }
 
@@ -182,6 +191,64 @@ public class BoundingBox {
         }
 
         return -1D;
+    }
+
+    //Returns minimum x, y, or z point from inputs 0, 1, or 2.
+    public double min(int i) {
+        switch (i) {
+            case 0:
+                return this.minX;
+            case 1:
+                return this.minY;
+            case 2:
+                return this.minZ;
+            default:
+                return 0;
+        }
+    }
+
+    //Returns maximum x, y, or z point from inputs 0, 1, or 2.
+    public double max(int i) {
+        switch (i) {
+            case 0:
+                return this.maxX;
+            case 1:
+                return this.maxY;
+            case 2:
+                return this.maxZ;
+            default:
+                return 0;
+        }
+    }
+
+    public double distance(Location location) {
+        return Math.sqrt(Math.min(
+                Math.pow(location.getX() - this.minX, 2),
+                Math.pow(location.getX() - this.maxX, 2)) + Math.min(Math.pow(location.getZ() - this.minZ, 2),
+                Math.pow(location.getZ() - this.maxZ, 2)
+        ));
+    }
+
+    public double distance(CustomLocation location) {
+        return Math.sqrt(Math.min(
+                Math.pow(location.getX() - this.minX, 2),
+                Math.pow(location.getX() - this.maxX, 2)) + Math.min(Math.pow(location.getZ() - this.minZ, 2),
+                Math.pow(location.getZ() - this.maxZ, 2)
+        ));
+    }
+
+    public double distance(double x, double z) {
+        final double dx = Math.min(Math.pow(x - minX, 2), Math.pow(x - maxX, 2));
+        final double dz = Math.min(Math.pow(z - minZ, 2), Math.pow(z - maxZ, 2));
+
+        return Math.sqrt(dx + dz);
+    }
+
+    public double distance(BoundingBox box) {
+        final double dx = Math.min(Math.pow(box.minX - minX, 2), Math.pow(box.maxX - maxX, 2));
+        final double dz = Math.min(Math.pow(box.minZ - minZ, 2), Math.pow(box.maxZ - maxZ, 2));
+
+        return Math.sqrt(dx + dz);
     }
 
     public double getMinX() {

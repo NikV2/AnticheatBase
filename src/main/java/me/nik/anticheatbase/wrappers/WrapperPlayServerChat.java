@@ -5,9 +5,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
-import java.util.Arrays;
-
-public class WrapperPlayServerChat extends AbstractPacket {
+public class WrapperPlayServerChat extends PacketWrapper {
     public static final PacketType TYPE = PacketType.Play.Server.CHAT;
 
     public WrapperPlayServerChat() {
@@ -45,40 +43,5 @@ public class WrapperPlayServerChat extends AbstractPacket {
 
     public void setChatType(EnumWrappers.ChatType type) {
         handle.getChatTypes().write(0, type);
-    }
-
-    /**
-     * Retrieve Position.
-     * <p>
-     * Notes: 0 - Chat (chat box) ,1 - System Message (chat box), 2 - Above
-     * action bar
-     *
-     * @return The current Position
-     * @deprecated Magic values replaced by enum
-     */
-    @Deprecated
-    public byte getPosition() {
-        Byte position = handle.getBytes().readSafely(0);
-        if (position != null) {
-            return position;
-        } else {
-            return getChatType().getId();
-        }
-    }
-
-    /**
-     * Set Position.
-     *
-     * @param value - new value.
-     * @deprecated Magic values replaced by enum
-     */
-    @Deprecated
-    public void setPosition(byte value) {
-        handle.getBytes().writeSafely(0, value);
-
-        if (EnumWrappers.getChatTypeClass() != null) {
-            Arrays.stream(EnumWrappers.ChatType.values()).filter(t -> t.getId() == value).findAny()
-                    .ifPresent(t -> handle.getChatTypes().writeSafely(0, t));
-        }
     }
 }

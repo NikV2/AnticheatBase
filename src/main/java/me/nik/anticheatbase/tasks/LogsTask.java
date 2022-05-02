@@ -4,7 +4,7 @@ import me.nik.anticheatbase.Anticheat;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * A task that we'll be using in order to process our logs
+ * A task that we'll be using in order to process our logs.
  */
 public class LogsTask extends BukkitRunnable {
 

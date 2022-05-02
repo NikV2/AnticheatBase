@@ -2,7 +2,7 @@ package me.nik.anticheatbase.files;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.files.commentedfiles.CommentedFileConfiguration;
-import me.nik.anticheatbase.manager.Initializer;
+import me.nik.anticheatbase.managers.Initializer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -41,13 +41,13 @@ public class Checks implements Initializer {
     }
 
     @Override
-    public void init() {
+    public void initialize() {
 
         File configFile = new File(this.plugin.getDataFolder(), "checks.yml");
 
         exists = configFile.exists();
 
-        boolean setHeaderFooter = !configFile.exists();
+        boolean setHeaderFooter = !exists;
 
         boolean changed = setHeaderFooter;
 
@@ -73,7 +73,7 @@ public class Checks implements Initializer {
     public enum Setting {
         SPEED("speed", "", "Speed Check"),
         SPEED_A("speed.a", true, "Should we enable this module?"),
-        SPEED_MAX_VL("speed.max_vl", 5, "The maximum violation amount a player needs to reach in order to get punished"),
+        SPEED_MAX_VL("speed.max_vl", 10, "The maximum violation amount a player needs to reach in order to get punished"),
         SPEED_COMMANDS("speed.commands", Collections.singletonList("ban %player% Unfair Advantage"), "The commands that will get executed once a player reaches the maximum violation amount");
 
         private final String key;

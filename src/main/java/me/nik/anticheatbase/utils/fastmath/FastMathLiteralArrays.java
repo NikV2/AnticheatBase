@@ -3,7 +3,7 @@ package me.nik.anticheatbase.utils.fastmath;
 /**
  * Utility class for loading tabulated data used by {@link FastMath}.
  */
-class FastMathLiteralArrays {
+public final class FastMathLiteralArrays {
     /**
      * Exponential evaluated at integer values,
      * exp(x) =  expIntTableA[x + EXP_INT_TABLE_MAX_INDEX] + expIntTableB[x+EXP_INT_TABLE_MAX_INDEX].

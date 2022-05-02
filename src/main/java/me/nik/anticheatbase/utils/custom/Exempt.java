@@ -1,6 +1,6 @@
 package me.nik.anticheatbase.utils.custom;
 
-import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.managers.profile.Profile;
 import me.nik.anticheatbase.playerdata.data.impl.MovementData;
 
 /**
@@ -23,7 +23,7 @@ public class Exempt {
 
     private boolean movement, velocity, jesus, elytra, vehicle, autoclicker, aim;
 
-    public void handleExempts() {
+    public void handleExempts(long timeStamp) {
 
         MovementData movementData = profile.getMovementData();
 

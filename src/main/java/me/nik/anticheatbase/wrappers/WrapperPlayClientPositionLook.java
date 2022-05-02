@@ -2,17 +2,30 @@ package me.nik.anticheatbase.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 
-public class WrapperPlayClientPositionLook extends AbstractPacket {
+public class WrapperPlayClientPositionLook extends PacketWrapper {
+
     public static final PacketType TYPE = PacketType.Play.Client.POSITION_LOOK;
 
-    public WrapperPlayClientPositionLook() {
-        super(new PacketContainer(TYPE), TYPE);
-        handle.getModifier().writeDefaults();
-    }
+    private final double x, y, z;
+    private final float yaw, pitch;
+    private final boolean onGround;
 
     public WrapperPlayClientPositionLook(PacketContainer packet) {
         super(packet, TYPE);
+
+        StructureModifier<Double> doubles = handle.getDoubles();
+        StructureModifier<Float> floats = handle.getFloat();
+
+        this.x = doubles.read(0);
+        this.y = doubles.read(1);
+        this.z = doubles.read(2);
+
+        this.yaw = floats.read(0);
+        this.pitch = floats.read(1);
+
+        this.onGround = handle.getBooleans().read(0);
     }
 
     /**
@@ -23,16 +36,7 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
      * @return The current X
      */
     public double getX() {
-        return handle.getDoubles().read(0);
-    }
-
-    /**
-     * Set X.
-     *
-     * @param value - new value.
-     */
-    public void setX(double value) {
-        handle.getDoubles().write(0, value);
+        return x;
     }
 
     /**
@@ -44,16 +48,7 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
      * @return The current FeetY
      */
     public double getY() {
-        return handle.getDoubles().read(1);
-    }
-
-    /**
-     * Set Feet Y.
-     *
-     * @param value - new value.
-     */
-    public void setY(double value) {
-        handle.getDoubles().write(1, value);
+        return y;
     }
 
     /**
@@ -64,16 +59,7 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
      * @return The current Z
      */
     public double getZ() {
-        return handle.getDoubles().read(2);
-    }
-
-    /**
-     * Set Z.
-     *
-     * @param value - new value.
-     */
-    public void setZ(double value) {
-        handle.getDoubles().write(2, value);
+        return z;
     }
 
     /**
@@ -84,16 +70,7 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
      * @return The current Yaw
      */
     public float getYaw() {
-        return handle.getFloat().read(0);
-    }
-
-    /**
-     * Set Yaw.
-     *
-     * @param value - new value.
-     */
-    public void setYaw(float value) {
-        handle.getFloat().write(0, value);
+        return yaw;
     }
 
     /**
@@ -104,16 +81,7 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
      * @return The current Pitch
      */
     public float getPitch() {
-        return handle.getFloat().read(1);
-    }
-
-    /**
-     * Set Pitch.
-     *
-     * @param value - new value.
-     */
-    public void setPitch(float value) {
-        handle.getFloat().write(1, value);
+        return pitch;
     }
 
     /**
@@ -124,16 +92,6 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
      * @return The current On Ground
      */
     public boolean getOnGround() {
-        return handle.getBooleans().read(0);
+        return onGround;
     }
-
-    /**
-     * Set On Ground.
-     *
-     * @param value - new value.
-     */
-    public void setOnGround(boolean value) {
-        handle.getBooleans().write(0, value);
-    }
-
 }

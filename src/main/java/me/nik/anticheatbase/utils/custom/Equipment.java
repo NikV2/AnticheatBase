@@ -1,9 +1,10 @@
 package me.nik.anticheatbase.utils.custom;
 
-import org.bukkit.Material;
+import me.nik.anticheatbase.utils.MiscUtils;
+import me.nik.anticheatbase.utils.ServerUtils;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 /**
  * A simple equipment class holding a profile's equipment
@@ -11,39 +12,68 @@ import org.bukkit.inventory.PlayerInventory;
  * Surprisingly getting the player's equipment every single tick can hinder perfomance
  * And it does add up and make a difference on a big playercount.
  * <p>
- * With this class we'll be getting all of them every 5 ticks in order to save perfomance.
+ * With this class we'll be getting all of them every 5 ticks since it doesn't affect us much.
  */
 public class Equipment {
 
-    private static final ItemStack EMPTY = new ItemStack(Material.AIR);
+    private ItemStack[] armorContents = new ItemStack[3];
 
-    private ItemStack
-            boots = EMPTY,
-            chestplate = EMPTY;
+    private int depthStriderLevel, frostWalkerLevel, soulSpeedLevel;
 
     private int ticks;
 
     public void handle(Player player) {
 
-        //Perfomance
         if (this.ticks++ < 5) return;
 
-        PlayerInventory inventory = player.getInventory();
+        this.armorContents = player.getInventory().getArmorContents();
 
-        ItemStack boots = inventory.getBoots();
-        this.boots = boots != null ? boots : EMPTY;
+        boots:
+        {
 
-        ItemStack chestplate = inventory.getChestplate();
-        this.chestplate = chestplate != null ? chestplate : EMPTY;
+            ItemStack boots = getBoots();
+
+            if (boots == MiscUtils.EMPTY_ITEM) break boots;
+
+            this.depthStriderLevel = boots.getEnchantmentLevel(Enchantment.DEPTH_STRIDER);
+
+            this.frostWalkerLevel = ServerUtils.isLegacy() ? 0 : boots.getEnchantmentLevel(Enchantment.FROST_WALKER);
+
+            this.soulSpeedLevel = !ServerUtils.isNetherUpdate() ? 0 : boots.getEnchantmentLevel(Enchantment.SOUL_SPEED);
+        }
 
         this.ticks = 0;
     }
 
     public ItemStack getBoots() {
-        return boots;
+        return this.armorContents[0] != null ? this.armorContents[0] : MiscUtils.EMPTY_ITEM;
+    }
+
+    public ItemStack getLeggings() {
+        return this.armorContents[1] != null ? this.armorContents[1] : MiscUtils.EMPTY_ITEM;
     }
 
     public ItemStack getChestplate() {
-        return chestplate;
+        return this.armorContents[2] != null ? this.armorContents[2] : MiscUtils.EMPTY_ITEM;
+    }
+
+    public ItemStack getHelmet() {
+        return this.armorContents[3] != null ? this.armorContents[3] : MiscUtils.EMPTY_ITEM;
+    }
+
+    public int getDepthStriderLevel() {
+        return depthStriderLevel;
+    }
+
+    public int getFrostWalkerLevel() {
+        return frostWalkerLevel;
+    }
+
+    public int getSoulSpeedLevel() {
+        return soulSpeedLevel;
+    }
+
+    public ItemStack[] getArmorContents() {
+        return armorContents;
     }
 }

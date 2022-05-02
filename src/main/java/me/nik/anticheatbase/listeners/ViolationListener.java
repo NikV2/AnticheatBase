@@ -2,10 +2,10 @@ package me.nik.anticheatbase.listeners;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.api.events.AnticheatViolationEvent;
+import me.nik.anticheatbase.enums.MsgType;
 import me.nik.anticheatbase.files.Config;
-import me.nik.anticheatbase.manager.impl.MsgType;
-import me.nik.anticheatbase.manager.impl.logs.PlayerLog;
-import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.managers.logs.PlayerLog;
+import me.nik.anticheatbase.managers.profile.Profile;
 import me.nik.anticheatbase.tasks.TickTask;
 import me.nik.anticheatbase.utils.JsonBuilder;
 import org.bukkit.Bukkit;
@@ -15,7 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 /**
- * A violation listener that we'll use for our alerts by using our custom event
+ * A violation listener that we'll use for our alerts by using our custom event.
  */
 public class ViolationListener implements Listener {
 
@@ -82,7 +82,7 @@ public class ViolationListener implements Listener {
                         .setClickEvent(JsonBuilder.ClickEventType.RUN_COMMAND, "/tp " + playerName)
                         .buildText();
 
-                jsonBuilder.sendMessage(this.plugin.getAlertManager().getList());
+                jsonBuilder.sendMessage(this.plugin.getAlertManager().getPlayersWithAlerts());
 
                 if (!Config.Setting.CHECK_SETTINGS_ALERT_CONSOLE.getBoolean()) break alerts;
 

@@ -1,12 +1,11 @@
 package me.nik.anticheatbase.tasks;
 
 import me.nik.anticheatbase.Anticheat;
-import me.nik.anticheatbase.playerdata.Profile;
 import me.nik.anticheatbase.utils.MathUtils;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
- * A task that we'll be using in order to grab the server's state and whatnot
+ * A task that we'll be using in order to grab the server's state and whatnot.
  */
 public class TickTask extends BukkitRunnable {
 
@@ -26,8 +25,11 @@ public class TickTask extends BukkitRunnable {
     @Override
     public void run() {
 
-        //Increment current tick
+        //Increment tick
         ticks++;
+
+        //Get the current system time
+        final long currentTime = System.currentTimeMillis();
 
         //Handle server TPS and tick time
         server:
@@ -35,8 +37,6 @@ public class TickTask extends BukkitRunnable {
 
             //The server's probably laggy at this early stage
             if (ticks < 100) break server;
-
-            final long currentTime = System.currentTimeMillis();
 
             tickTime = currentTime - this.lastTime;
 
@@ -58,11 +58,15 @@ public class TickTask extends BukkitRunnable {
             }
 
             //Handle lag spikes
-            if (tickTime >= 1000L) lastLagSpike = currentTime;
+            if (tickTime >= 1050L
+                    || tps <= 14.5) {
+
+                lastLagSpike = currentTime;
+            }
         }
 
-        //Reset Data
-        this.plugin.getProfileManager().getProfileMap().values().forEach(Profile::handleTick);
+        //Tick
+        this.plugin.getProfileManager().getProfileMap().values().forEach(profile -> profile.handleTick(currentTime));
     }
 
     public static double getTPS() {

@@ -2,8 +2,8 @@ package me.nik.anticheatbase.commands.subcommands;
 
 import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.commands.SubCommand;
-import me.nik.anticheatbase.manager.impl.MsgType;
-import me.nik.anticheatbase.manager.impl.Permissions;
+import me.nik.anticheatbase.enums.MsgType;
+import me.nik.anticheatbase.enums.Permissions;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

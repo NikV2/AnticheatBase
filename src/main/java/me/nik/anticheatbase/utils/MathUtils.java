@@ -14,82 +14,36 @@ public final class MathUtils {
     }
 
     //---------------------------------------------------------------------------------------
-    public static final float FRICTION = .91F;
-    public static final double WATER_FRICTION = .800000011920929D;
-    public static final double SERVER_GROUND_DIVISOR = .015625D;
-    public static final double MOTION_Y_FRICTION = .9800000190734863D;
-    public static final double MAXIMUM_MOTION_Y = .41999998688697815D;
-    //---------------------------------------------------------------------------------------
-
-    //---------------------------------------------------------------------------------------
     public static final double EXPANDER = 1.6777216E7D;
     public static final long MINIMUM_ROTATION_DIVISOR = 131072L;
     //---------------------------------------------------------------------------------------
 
-    public static long getAbsoluteGcd(final float current, final float last) {
-
-        final long currentExpanded = (long) (current * EXPANDER);
-
-        final long lastExpanded = (long) (last * EXPANDER);
-
-        return getGcd(currentExpanded, lastExpanded);
+    public static int millisToTicks(final long millis) {
+        return (int) millis / 50;
     }
 
-    private static long getGcd(final long current, final long last) {
-        return (last <= 16384L) ? current : getGcd(last, current % last);
+    public static long ticksToMillis(final int ticks) {
+        return ticks * 50L;
     }
 
-    public static double getAbsoluteDelta(final double one, final double two) {
-        return Math.abs(Math.abs(one) - Math.abs(two));
-    }
-
-    public static double decimalRound(final double val, int scale) {
-        return BigDecimal.valueOf(val).setScale(scale, RoundingMode.HALF_EVEN).doubleValue();
-    }
-
-    public static float getAngle(final Vector one, final Vector two) {
-
-        final double dot = Math.min(Math.max(
-                        (one.getX() * two.getX() + one.getY() * two.getY() + one.getZ() * two.getZ())
-                                / (one.length() * two.length()),
-                        -1.0),
-                1.0);
-
-        return (float) FastMath.acos(dot);
+    public static long nanosToMillis(final long nanoseconds) {
+        return (nanoseconds / 1000000L);
     }
 
     public static Vector getDirection(final Location location) {
 
         Vector vector = new Vector();
 
-        final double rotX = location.getYaw();
-        final double rotY = location.getPitch();
+        final double x = location.getYaw();
+        final double y = location.getPitch();
 
-        final double radiansRotY = FastMath.toRadians(rotY);
+        final double radiansY = FastMath.toRadians(y);
 
-        vector.setY(-FastMath.sin(radiansRotY));
+        vector.setY(-FastMath.sin(radiansY));
 
-        final double xz = FastMath.cos(radiansRotY);
+        final double xz = FastMath.cos(radiansY);
 
-        final double radiansRotX = FastMath.toRadians(rotX);
-
-        vector.setX(-xz * FastMath.sin(radiansRotX));
-        vector.setZ(xz * FastMath.cos(radiansRotX));
-
-        return vector;
-    }
-
-    public static Vector getDirection(final float yaw, final float pitch) {
-
-        Vector vector = new Vector();
-
-        final double radiansRotY = FastMath.toRadians(pitch);
-
-        vector.setY(-FastMath.sin(radiansRotY));
-
-        final double xz = FastMath.cos(radiansRotY);
-
-        final double radiansRotX = FastMath.toRadians(yaw);
+        final double radiansRotX = FastMath.toRadians(x);
 
         vector.setX(-xz * FastMath.sin(radiansRotX));
         vector.setZ(xz * FastMath.cos(radiansRotX));
@@ -97,16 +51,37 @@ public final class MathUtils {
         return vector;
     }
 
-    public static boolean isScientificNotation(final Number num) {
-        return num.doubleValue() < .001D;
+    public static double decimalRound(final double val, int scale) {
+        return BigDecimal.valueOf(val).setScale(scale, RoundingMode.HALF_EVEN).doubleValue();
     }
 
-    public static int millisToTicks(long millis) {
-        return (int) millis / 50;
+    public static float strictClamp360(float value) {
+
+        while (value > 360.0F) value -= 360.0F;
+
+        while (value < 0.0F) value += 360.0F;
+
+        return value;
     }
 
-    public static long nanosToMillis(final long nanoseconds) {
-        return (nanoseconds / 1000000L);
+    public static double strictClamp360(double value) {
+
+        while (value > 360.0F) value -= 360.0F;
+
+        while (value < 0.0F) value += 360.0F;
+
+        return value;
+    }
+
+    public static float clamp180(float value) {
+
+        value %= 360F;
+
+        if (value >= 180.0F) value -= 360.0F;
+
+        if (value < -180.0F) value += 360.0F;
+
+        return value;
     }
 
     public static long elapsed(final long millis) {
@@ -115,5 +90,22 @@ public final class MathUtils {
 
     public static int elapsedTicks(final int ticks) {
         return TickTask.getCurrentTick() - ticks;
+    }
+
+    public static long getAbsoluteGcd(final float current, final float last) {
+
+        final long currentExpanded = (long) (current * EXPANDER);
+
+        final long lastExpanded = (long) (last * EXPANDER);
+
+        return gcd(currentExpanded, lastExpanded);
+    }
+
+    private static long gcd(final long current, final long last) {
+        return (last <= 16384L) ? current : gcd(last, current % last);
+    }
+
+    public static double getAbsoluteDelta(final double one, final double two) {
+        return Math.abs(Math.abs(one) - Math.abs(two));
     }
 }

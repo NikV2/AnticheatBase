@@ -1,9 +1,8 @@
 package me.nik.anticheatbase.playerdata.processors.impl;
 
-import me.nik.anticheatbase.playerdata.Profile;
+import me.nik.anticheatbase.managers.profile.Profile;
 import me.nik.anticheatbase.playerdata.data.impl.RotationData;
 import me.nik.anticheatbase.playerdata.processors.Processor;
-import me.nik.anticheatbase.utils.MathUtils;
 
 /**
  * A simple cinematic processor to determine whether a player is using cinematic
@@ -14,10 +13,10 @@ import me.nik.anticheatbase.utils.MathUtils;
 public class CinematicProcessor implements Processor {
 
     //This is the minimum rotation constant
-    private static final double CINEMATIC_CONSTANT = 7.8125E-3;
+    private static final double CINEMATIC_CONSTANT = .0078125F;
 
     private final Profile profile;
-    private int lastCinematicTicks, cinematicTicks;
+    private int lastCinematicTicks = 100, cinematicTicks;
     private boolean cinematic;
 
     public CinematicProcessor(Profile profile) {
@@ -25,7 +24,7 @@ public class CinematicProcessor implements Processor {
     }
 
     public boolean isCinematic() {
-        return this.cinematic;
+        return cinematic;
     }
 
     @Override
@@ -36,39 +35,35 @@ public class CinematicProcessor implements Processor {
 
         RotationData data = profile.getRotationData();
 
-        //Fixes exploits
-        if (data.getDeltaPitch() == 0F || data.getDeltaYaw() == 0F) return;
+        final float deltaYaw = data.getDeltaYaw();
+        final float deltaPitch = data.getDeltaPitch();
+
+        if (deltaYaw == 0F || deltaPitch == 0F || data.getRotationsAfterTeleport() < 3) return;
 
         final float yawAccel = data.getYawAccel();
-
         final float pitchAccel = data.getPitchAccel();
-
-        final boolean invalid = MathUtils.isScientificNotation(yawAccel)
-                || yawAccel == 0F
-                || MathUtils.isScientificNotation(pitchAccel)
-                || pitchAccel == 0F;
 
         SensitivityProcessor sensitivityProcessor = data.getSensitivityProcessor();
 
         final double constantYaw = sensitivityProcessor.getConstantYaw();
-
         final double constantPitch = sensitivityProcessor.getConstantPitch();
 
-        final boolean cinematic = !invalid && yawAccel < 1F && pitchAccel < 1F;
+        final float delta = Math.abs(deltaYaw - deltaPitch);
 
-        if (cinematic) {
+        final boolean cinematic = yawAccel > .001F
+                && yawAccel < 1F
+                && pitchAccel > .001F
+                && pitchAccel < 1F
+                && delta < 3F
+                && constantYaw < CINEMATIC_CONSTANT
+                && constantPitch < CINEMATIC_CONSTANT;
 
-            if (constantYaw < CINEMATIC_CONSTANT && constantPitch < CINEMATIC_CONSTANT) this.cinematicTicks++;
+        this.cinematicTicks = cinematic ? Math.min(5, this.cinematicTicks + 1) : Math.max(0, this.cinematicTicks - 1);
 
-        } else this.cinematicTicks -= this.cinematicTicks > 0 ? 1 : 0;
-
-        //Make sure we're not getting exploited
-        this.cinematicTicks -= this.cinematicTicks > 5 ? 1 : 0;
-
-        this.cinematic = this.cinematicTicks > 2 || getLastCinematicTicks() < 80;
+        this.cinematic = this.cinematicTicks > 1 || this.lastCinematicTicks < 80;
     }
 
     public int getLastCinematicTicks() {
-        return this.lastCinematicTicks;
+        return lastCinematicTicks;
     }
 }

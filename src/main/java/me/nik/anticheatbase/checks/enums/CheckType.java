@@ -23,6 +23,7 @@ public enum CheckType {
     VELOCITY("Velocity", CheckCategory.COMBAT),
     INVENTORY("Inventory", CheckCategory.WORLD),
     INTERACT("Interact", CheckCategory.WORLD),
+    FASTCLIMB("FastClimb", CheckCategory.MOVEMENT),
     HITBOX("Hitbox", CheckCategory.COMBAT);
 
     private final String checkName;

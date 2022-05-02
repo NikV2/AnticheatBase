@@ -17,9 +17,14 @@
 
     <name>AnticheatBase</name>
 
-    <description>A clean anticheat base</description>
+    <description>A simple and efficient anticheat base</description>
 
     <repositories>
+
+        <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
 
         <repository>
             <id>spigotmc-repo</id>
@@ -29,6 +34,11 @@
         <repository>
             <id>dmulloy2-repo</id>
             <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+        </repository>
+
+        <repository>
+            <id>viaversion-repo</id>
+            <url>https://repo.viaversion.com</url>
         </repository>
 
         <repository>
@@ -43,22 +53,36 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>4.7.0</version>
+            <version>4.8.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>io.github.classgraph</groupId>
-            <artifactId>classgraph</artifactId>
-            <version>4.8.128</version>
-            <scope>compile</scope>
+            <groupId>us.myles</groupId>
+            <artifactId>viaversion</artifactId>
+            <version>LATEST</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ProtocolSupport</groupId>
+            <artifactId>ProtocolSupport</artifactId>
+            <version>master-04834effe2-1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-api</artifactId>
+            <version>1.18-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
@@ -78,19 +102,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.1</version>
-                <configuration>
-                    <artifactSet>
-                        <includes>
-                            <include>io.github.classgraph</include>
-                        </includes>
-                    </artifactSet>
-                    <relocations>
-                        <relocation>
-                            <pattern>io.github.classgraph</pattern>
-                            <shadedPattern>anticheat_libs.classgraph</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
