@@ -21,6 +21,8 @@ In order to maximize perfomance gain, Especially in newer versions of minecraft.
 * Made to support all versions of Minecraft
 * High perfomance packet wrapping system with caching
 * High perfomance in general
+* Access to the player's client version
+* Access to the player's client brand
 * Zero usage of unnecessary method calls - api usage for the sake of it looking *pretty*
 
 ## License
