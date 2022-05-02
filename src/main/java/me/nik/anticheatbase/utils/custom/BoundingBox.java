@@ -193,34 +193,6 @@ public class BoundingBox {
         return -1D;
     }
 
-    //Returns minimum x, y, or z point from inputs 0, 1, or 2.
-    public double min(int i) {
-        switch (i) {
-            case 0:
-                return this.minX;
-            case 1:
-                return this.minY;
-            case 2:
-                return this.minZ;
-            default:
-                return 0;
-        }
-    }
-
-    //Returns maximum x, y, or z point from inputs 0, 1, or 2.
-    public double max(int i) {
-        switch (i) {
-            case 0:
-                return this.maxX;
-            case 1:
-                return this.maxY;
-            case 2:
-                return this.maxZ;
-            default:
-                return 0;
-        }
-    }
-
     public double distance(Location location) {
         return Math.sqrt(Math.min(
                 Math.pow(location.getX() - this.minX, 2),
