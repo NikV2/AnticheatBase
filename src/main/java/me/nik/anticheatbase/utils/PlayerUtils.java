@@ -50,7 +50,7 @@ public final class PlayerUtils {
 
         do {
 
-            vertical -= .06F; //Falling acceleration
+            vertical -= .08F; //Falling acceleration
 
             vertical *= MoveUtils.MOTION_Y_FRICTION; //Vertical Friction
 
