@@ -13,7 +13,8 @@ public class ExpiringMap<K, V> extends HashMap<K, V> {
         this.expireMillis = expireMillis;
     }
 
-    public V getIfPresent(K key) {
+    @Override
+    public V get(Object key) {
 
         validate();
 
