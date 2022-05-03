@@ -1,6 +1,6 @@
 package me.nik.anticheatbase.nms;
 
-import org.bukkit.Bukkit;
+import me.nik.anticheatbase.utils.ServerVersion;
 
 /**
  * A simple NMS Manager class
@@ -17,101 +17,15 @@ public class NmsManager {
 
     public NmsManager() {
 
-        String version = Bukkit.getServer().getClass().getPackage().getName();
-
-        version = version.substring(version.lastIndexOf('.') + 1);
-
-        switch (version) {
-
-            /*//----------------------------------------------\\
-
-            case "v1_17_R1":
-                this.nmsInstance = new Instance_1_17_R1();
-                break;
-
-            //----------------------------------------------\\
-
-            case "v1_16_R3":
-                this.nmsInstance = new Instance1_16_R3();
-                break;
-
-            case "v1_16_R2":
-                this.nmsInstance = new Instance1_16_R2();
-                break;
-
-            case "v1_16_R1":
-                this.nmsInstance = new Instance1_16_R1();
-                break;
-
-            //----------------------------------------------\\
-
-            case "v1_15_R1":
-                this.nmsInstance = new Instance1_15_R1();
-                break;
-
-            //----------------------------------------------\\
-
-            case "v1_14_R1":
-                this.nmsInstance = new Instance1_14_R1();
-                break;
-
-            //----------------------------------------------\\
-
-            case "v1_13_R2":
-                this.nmsInstance = new Instance1_13_R2();
-                break;
-
-            case "v1_13_R1":
-                this.nmsInstance = new Instance1_13_R1();
-                break;
-
-            //----------------------------------------------\\
-
-            case "v1_12_R1":
-                this.nmsInstance = new Instance1_12_R1();
-                break;
-
-            //----------------------------------------------\\
-
-            case "v1_11_R1":
-                this.nmsInstance = new Instance1_11_R1();
-                break;
-
-            //----------------------------------------------\\
-
-            case "v1_10_R1":
-                this.nmsInstance = new Instance1_10_R1();
-                break;
-
-            //----------------------------------------------\\
-
-            case "v1_9_R2":
-                this.nmsInstance = new Instance1_9_R2();
-                break;
-
-            case "v1_9_R1":
-                this.nmsInstance = new Instance1_9_R1();
-                break;
-
-            //----------------------------------------------\\
-
-            case "v1_8_R3":
-                this.nmsInstance = new Instance1_8_R3();
-                break;
-
-            case "v1_8_R2":
-                this.nmsInstance = new Instance1_8_R2();
-                break;
-
-            case "v1_8_R1":
-                this.nmsInstance = new Instance1_8_R1();
-                break;*/
-
-            //----------------------------------------------\\
+        switch (ServerVersion.getVersion()) {
 
             default:
                 this.nmsInstance = new InstanceDefault();
                 break;
+
+            /*
+            Add more versions here.
+             */
         }
     }
 

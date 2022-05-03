@@ -3,7 +3,7 @@ package me.nik.anticheatbase.wrappers;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import io.netty.buffer.ByteBuf;
-import me.nik.anticheatbase.utils.ServerUtils;
+import me.nik.anticheatbase.utils.ServerVersion;
 
 public class WrapperPlayClientCustomPayload extends PacketWrapper {
     public static final PacketType TYPE = PacketType.Play.Client.CUSTOM_PAYLOAD;
@@ -18,7 +18,7 @@ public class WrapperPlayClientCustomPayload extends PacketWrapper {
     }
 
     public String getChannel() {
-        return ServerUtils.isLegacy()
+        return ServerVersion.getVersion().isLowerThan(ServerVersion.v1_13_R1)
                 ? handle.getStrings().readSafely(0)
                 : handle.getMinecraftKeys().readSafely(0).getFullKey();
     }

@@ -4,7 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction;
-import me.nik.anticheatbase.utils.ServerUtils;
+import me.nik.anticheatbase.utils.ServerVersion;
 import org.bukkit.util.Vector;
 
 public class WrapperPlayClientUseEntity extends PacketWrapper {
@@ -22,7 +22,7 @@ public class WrapperPlayClientUseEntity extends PacketWrapper {
 
         EnumWrappers.EntityUseAction action;
 
-        if (ServerUtils.isCavesUpdate()) {
+        if (ServerVersion.getVersion().isLowerThan(ServerVersion.v1_17_R1)) {
 
             WrappedEnumEntityUseAction enumEntityUseAction = handle.getEnumEntityUseActions().read(0);
 

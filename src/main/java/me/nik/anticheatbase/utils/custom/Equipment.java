@@ -1,7 +1,7 @@
 package me.nik.anticheatbase.utils.custom;
 
 import me.nik.anticheatbase.utils.MiscUtils;
-import me.nik.anticheatbase.utils.ServerUtils;
+import me.nik.anticheatbase.utils.ServerVersion;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,9 +37,9 @@ public class Equipment {
 
             this.depthStriderLevel = boots.getEnchantmentLevel(Enchantment.DEPTH_STRIDER);
 
-            this.frostWalkerLevel = ServerUtils.isLegacy() ? 0 : boots.getEnchantmentLevel(Enchantment.FROST_WALKER);
+            this.frostWalkerLevel = ServerVersion.getVersion().isLowerThan(ServerVersion.v1_13_R1) ? 0 : boots.getEnchantmentLevel(Enchantment.FROST_WALKER);
 
-            this.soulSpeedLevel = !ServerUtils.isNetherUpdate() ? 0 : boots.getEnchantmentLevel(Enchantment.SOUL_SPEED);
+            this.soulSpeedLevel = ServerVersion.getVersion().isLowerThan(ServerVersion.v1_16_R1) ? 0 : boots.getEnchantmentLevel(Enchantment.SOUL_SPEED);
         }
 
         this.ticks = 0;

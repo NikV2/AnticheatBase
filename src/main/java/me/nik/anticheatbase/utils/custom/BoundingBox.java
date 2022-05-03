@@ -1,6 +1,6 @@
 package me.nik.anticheatbase.utils.custom;
 
-import me.nik.anticheatbase.utils.ServerUtils;
+import me.nik.anticheatbase.utils.ServerVersion;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -23,7 +23,7 @@ public class BoundingBox {
         /*
         Not supported in legacy versions
          */
-        if (ServerUtils.isLegacy()) return null;
+        if (ServerVersion.getVersion().isLowerThan(ServerVersion.v1_13_R1)) return null;
 
         org.bukkit.util.BoundingBox bukkitBox = entity.getBoundingBox();
 

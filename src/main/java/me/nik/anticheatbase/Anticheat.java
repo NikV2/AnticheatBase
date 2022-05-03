@@ -101,8 +101,7 @@ public class Anticheat extends JavaPlugin {
                     "me.nik.anticheatbase.utils.fastmath.FastMathLiteralArrays",
                     "me.nik.anticheatbase.utils.minecraft.MathHelper",
                     "me.nik.anticheatbase.utils.CollisionUtils",
-                    "me.nik.anticheatbase.utils.MoveUtils",
-                    "me.nik.anticheatbase.utils.ServerUtils"
+                    "me.nik.anticheatbase.utils.MoveUtils"
             );
 
         } catch (ClassNotFoundException e) {

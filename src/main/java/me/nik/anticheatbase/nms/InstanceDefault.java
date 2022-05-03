@@ -1,6 +1,6 @@
 package me.nik.anticheatbase.nms;
 
-import me.nik.anticheatbase.utils.ServerUtils;
+import me.nik.anticheatbase.utils.ServerVersion;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
@@ -13,7 +13,7 @@ public class InstanceDefault implements NmsInstance {
 
     @Override
     public float getAttackCooldown(Player player) {
-        return ServerUtils.isNetherUpdate() ? player.getAttackCooldown() : 1F;
+        return ServerVersion.getVersion().isHigherThanOrEquals(ServerVersion.v1_16_R1) ? player.getAttackCooldown() : 1F;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class InstanceDefault implements NmsInstance {
 
     @Override
     public boolean isWaterLogged(Block block) {
-        return !ServerUtils.isLegacy()
+        return ServerVersion.getVersion().isHigherThanOrEquals(ServerVersion.v1_13_R1)
                 && (block.getBlockData() instanceof org.bukkit.block.data.Waterlogged
                 && ((org.bukkit.block.data.Waterlogged) block).isWaterlogged());
     }
@@ -50,7 +50,7 @@ public class InstanceDefault implements NmsInstance {
 
     @Override
     public boolean isGliding(Player player) {
-        return ServerUtils.isElytraUpdate() && player.isGliding();
+        return ServerVersion.getVersion().isHigherThan(ServerVersion.v1_8_R3) && player.isGliding();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class InstanceDefault implements NmsInstance {
 
     @Override
     public boolean isRiptiding(Player player) {
-        return !ServerUtils.isLegacy() && player.isRiptiding();
+        return ServerVersion.getVersion().isHigherThanOrEquals(ServerVersion.v1_13_R1) && player.isRiptiding();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class InstanceDefault implements NmsInstance {
 
     @Override
     public ItemStack getItemInOffHand(Player player) {
-        return ServerUtils.isElytraUpdate() ? player.getInventory().getItemInOffHand() : null;
+        return ServerVersion.getVersion().isHigherThan(ServerVersion.v1_8_R3) ? player.getInventory().getItemInOffHand() : null;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class InstanceDefault implements NmsInstance {
 
     @Override
     public float getAttributeSpeed(Player player) {
-        return ServerUtils.isElytraUpdate() ? (float) player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue() : 0F;
+        return ServerVersion.getVersion().isHigherThan(ServerVersion.v1_8_R3) ? (float) player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getValue() : 0F;
     }
 
     @Override

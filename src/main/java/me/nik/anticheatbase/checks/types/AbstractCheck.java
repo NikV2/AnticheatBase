@@ -23,28 +23,25 @@ public abstract class AbstractCheck {
 
     private final boolean enabled;
 
-    private final int maxVl;
-
     private final Set<String> commands = new LinkedHashSet<>();
 
     private final boolean enabledSetback;
 
     private final String checkName, checkType, fullCheckName, description;
     private final boolean experimental;
-    private final float maxBuffer;
     private final CheckCategory checkCategory;
     private final boolean development;
     private int vl;
+    private final int maxVl;
     private float buffer;
     private String verbose; //TODO: USE STRINGBUILDER
 
-    public AbstractCheck(Profile profile, CheckType check, String type, String description, float maxBuffer) {
+    public AbstractCheck(Profile profile, CheckType check, String type, String description) {
 
         this.profile = profile;
         this.checkName = check.getCheckName();
         this.checkType = type;
         this.description = description;
-        this.maxBuffer = maxBuffer;
 
         final CommentedFileConfiguration config = Anticheat.getInstance().getChecks();
         final String checkName = this.checkName.toLowerCase();
@@ -80,10 +77,6 @@ public abstract class AbstractCheck {
         this.checkCategory = check.getCheckCategory();
 
         this.fullCheckName = this.checkName + (type.isEmpty() ? "" : (" (" + type + ")"));
-    }
-
-    public float maxBuffer() {
-        return maxBuffer;
     }
 
     public String getVerbose() {
@@ -123,6 +116,7 @@ public abstract class AbstractCheck {
                 this.description,
                 this.checkType,
                 verbose,
+                //Increase the violations here
                 this.vl++,
                 this.maxVl,
                 this.experimental);

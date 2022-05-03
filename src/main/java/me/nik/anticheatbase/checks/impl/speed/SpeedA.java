@@ -8,7 +8,7 @@ import me.nik.anticheatbase.processors.Packet;
 
 public class SpeedA extends Check {
     public SpeedA(Profile profile) {
-        super(profile, CheckType.SPEED, "A", "Checks for speed", 5);
+        super(profile, CheckType.SPEED, "A", "Checks for speed");
     }
 
     @Override
@@ -21,7 +21,7 @@ public class SpeedA extends Check {
 
         if (data.getDeltaXZ() > Double.MIN_VALUE) {
 
-            if (increaseBuffer() > maxBuffer()) fail(
+            if (increaseBuffer() > 50) fail(
                     "FLAGGED BY THE BEST SPEED CHECK EVER IN EXISTENCE, Credits to Elon Musk."
             );
 

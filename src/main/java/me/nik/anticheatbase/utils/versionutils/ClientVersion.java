@@ -41,7 +41,7 @@ public enum ClientVersion {
     v_1_17_1(756),
     v_1_18(757),
     v1_18_2(758),
-    UNKNOWN(999999999);
+    UNKNOWN(Integer.MAX_VALUE);
 
     private final int protocolVersion;
 

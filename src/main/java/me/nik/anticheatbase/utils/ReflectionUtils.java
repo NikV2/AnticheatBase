@@ -150,7 +150,7 @@ public final class ReflectionUtils {
 
     public static BoundingBox getBoundingBox(final Entity entity) {
 
-        if (ServerUtils.isLegacy()) {
+        if (ServerVersion.getVersion().isLowerThan(ServerVersion.v1_13_R1)) {
             try {
                 Object nmsBoundingBox = getMethod(getNMSClass("Entity"), "getBoundingBox")
                         .invoke(craftEntity(entity));
@@ -183,7 +183,7 @@ public final class ReflectionUtils {
         Class<?> boxClass = box.getClass();
 
         try {
-            if (ServerUtils.isLegacy()) {
+            if (ServerVersion.getVersion().isLowerThan(ServerVersion.v1_13_R1)) {
                 x = (double) getField(boxClass, "a").get(box);
                 y = (double) getField(boxClass, "b").get(box);
                 z = (double) getField(boxClass, "c").get(box);
@@ -209,7 +209,7 @@ public final class ReflectionUtils {
 
         try {
 
-            if (ServerUtils.isLegacy()) {
+            if (ServerVersion.getVersion().isLowerThan(ServerVersion.v1_13_R1)) {
                 x = (double) getField(boxClass, "d").get(box);
                 y = (double) getField(boxClass, "e").get(box);
                 z = (double) getField(boxClass, "f").get(box);
