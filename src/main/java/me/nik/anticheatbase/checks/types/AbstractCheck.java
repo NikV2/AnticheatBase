@@ -161,7 +161,7 @@ public abstract class AbstractCheck {
         return this.buffer++;
     }
 
-    protected float increaseBufferBy(float amount) {
+    protected float increaseBufferBy(double amount) {
         return this.buffer += amount;
     }
 
@@ -169,8 +169,8 @@ public abstract class AbstractCheck {
         return this.buffer == 0 ? 0 : (this.buffer = Math.max(0, this.buffer - 1));
     }
 
-    protected float decreaseBufferBy(float amount) {
-        return this.buffer == 0 ? 0 : (this.buffer = Math.max(0, this.buffer - amount));
+    protected float decreaseBufferBy(double amount) {
+        return this.buffer == 0 ? 0 : (this.buffer = (float) Math.max(0, this.buffer - amount));
     }
 
     public void resetBuffer() {
