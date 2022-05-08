@@ -86,7 +86,7 @@ public class Config implements Initializer {
         LOGS("logs", "", "Log Settings"),
         LOGS_ENABLED("logs.enabled", true, "Should we enable logging?"),
         LOGS_TYPE("logs.type", "YAML", "What type of Database should we use for logging?"),
-        LOGS_CLEAR_DAYS("logs.clear_days", 3, "Logs older than this value of Days will be cleared");
+        LOGS_CLEAR_DAYS("logs.clear_days", 5, "Logs older than this value of Days will be cleared");
 
         private final String key;
         private final Object defaultValue;

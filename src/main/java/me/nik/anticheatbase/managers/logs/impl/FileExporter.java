@@ -4,7 +4,6 @@ import me.nik.anticheatbase.Anticheat;
 import me.nik.anticheatbase.managers.logs.LogExporter;
 import me.nik.anticheatbase.managers.logs.PlayerLog;
 import me.nik.anticheatbase.utils.ChatUtils;
-import me.nik.anticheatbase.utils.TaskUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -34,7 +33,7 @@ public class FileExporter extends LogExporter {
     @Override
     public void initialize() {
 
-        TaskUtils.taskAsync(() -> {
+        CompletableFuture.runAsync(() -> {
 
             try {
 

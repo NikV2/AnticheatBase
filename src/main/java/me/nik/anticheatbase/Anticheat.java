@@ -66,7 +66,7 @@ public class Anticheat extends JavaPlugin {
         new TickTask(this).runTaskTimerAsynchronously(this, 50L, 0L);
 
         if (Config.Setting.LOGS_ENABLED.getBoolean()) {
-            new LogsTask(this).runTaskTimerAsynchronously(this, 1200L, 320L);
+            new LogsTask(this).runTaskTimerAsynchronously(this, 6000L, 6000L);
         }
 
         new ViolationTask(this).runTaskTimerAsynchronously(this,

@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class LogExporter {
 
     protected static final long DELETE_DAYS = TimeUnit.DAYS.toMillis(Config.Setting.LOGS_CLEAR_DAYS.getInt());
+
     protected final Anticheat plugin;
 
     public LogExporter(Anticheat plugin) {

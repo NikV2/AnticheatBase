@@ -20,7 +20,7 @@ public final class ChatUtils {
         return ChatColor.stripColor(STRIP_COLOR_PATTERN.matcher(input).replaceAll(""));
     }
 
-    public static void log(String message) {
+    public static void log(final String message) {
         Anticheat.getInstance().getLogger().info(message);
     }
 }
