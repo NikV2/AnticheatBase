@@ -51,9 +51,6 @@ public class WrapperPlayClientUseEntity extends PacketWrapper {
 
     /**
      * Retrieve the target vector.
-     * <p>
-     * Notes: Only if {@link #getType()} is {@link EnumWrappers.EntityUseAction#INTERACT_AT}, Make sure the {@link #getType()} method
-     * Has been called first.
      *
      * @return The target vector or null
      */
