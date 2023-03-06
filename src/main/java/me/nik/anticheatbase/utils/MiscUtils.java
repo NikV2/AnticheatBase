@@ -1,7 +1,7 @@
 package me.nik.anticheatbase.utils;
 
 import com.google.common.base.Charsets;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;

@@ -61,7 +61,7 @@ public abstract class PacketWrapper {
      */
     public void receivePacket(Player sender) {
         try {
-            ProtocolLibrary.getProtocolManager().recieveClientPacket(sender,
+            ProtocolLibrary.getProtocolManager().receiveClientPacket(sender,
                     getHandle());
         } catch (Exception ignored) {
         }
