@@ -62,8 +62,11 @@ public class RotationHeuristics {
         /*
         Collection is finished, No more data can be processed.
          */
-        if (isFinished()) return;
-
+        if (isFinished()) {
+            reset() // Clear data
+            return;
+        }
+        
         /*
         If this is the last element we're going to process, Get the correct average amount.
         Otherwise add the amount in order to use the average variable as our sum.
