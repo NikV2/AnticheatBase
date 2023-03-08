@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction;
+import me.nik.anticheatbase.utils.ServerVersion;
 import org.bukkit.util.Vector;
 
 public class WrapperPlayClientUseEntity extends PacketWrapper {
@@ -21,12 +22,23 @@ public class WrapperPlayClientUseEntity extends PacketWrapper {
 
         EnumWrappers.EntityUseAction action;
 
-        WrappedEnumEntityUseAction enumEntityUseAction = handle.getEnumEntityUseActions().read(0);
+        if (ServerVersion.getVersion().isHigherThan(ServerVersion.v1_16_R3)) {
 
-        if ((action = enumEntityUseAction.getAction()) == EnumWrappers.EntityUseAction.INTERACT_AT) {
+            WrappedEnumEntityUseAction enumEntityUseAction = handle.getEnumEntityUseActions().read(0);
 
-            this.targetVector = enumEntityUseAction.getPosition();
+            if ((action = enumEntityUseAction.getAction()) == EnumWrappers.EntityUseAction.INTERACT_AT) {
+
+                this.targetVector = enumEntityUseAction.getPosition();
+            }
+
+        } else {
+
+            if ((action = handle.getEntityUseActions().read(0)) == EnumWrappers.EntityUseAction.INTERACT_AT) {
+
+                this.targetVector = handle.getVectors().read(0);
+            }
         }
+
 
         this.type = action;
     }
