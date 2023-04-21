@@ -14,11 +14,15 @@ import me.nik.anticheatbase.utils.fastmath.FastMath;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientLook;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientPosition;
 import me.nik.anticheatbase.wrappers.WrapperPlayClientPositionLook;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MovementData implements Data {
@@ -40,12 +44,12 @@ public class MovementData implements Data {
 
     private List<Material> nearbyBlocks = new ArrayList<>();
 
-    private boolean onGround, lastOnGround, serverGround, lastServerGround;
+    private boolean onGround, lastOnGround, serverGround, lastServerGround, inAir, onIce, onSlime, blockNearHead;
 
     private int flyTicks, serverGroundTicks, lastServerGroundTicks, nearGroundTicks, lastNearGroundTicks,
             lastUnloadedChunkTicks = 100,
             clientGroundTicks, lastNearWallTicks,
-            lastFrictionFactorUpdateTicks, lastNearEdgeTicks;
+            lastFrictionFactorUpdateTicks, lastNearEdgeTicks, airTicks, iceTicks, slimeTicks, sinceIceTicks, sinceSlimeTicks, blockNearHeadTicks, sinceBlockNearHeadTicks;
 
     public MovementData(Profile profile) {
         this.profile = profile;
@@ -193,13 +197,31 @@ public class MovementData implements Data {
         NOTE: You should ALWAYS use NMS if you plan on supporting 1.9+
         For a production server, DO NOT use spigot's api. It's slow. (Especially for Blocks, Chunks, Materials)
          */
+
+        this.inAir = nearbyBlocksResult.getBlockTypes().stream().allMatch(block -> block == Material.AIR);
+        this.onIce =  nearbyBlocksResult.getBlockTypes().stream().anyMatch(block -> block.toString().contains("ICE"));
+        this.onSlime = nearbyBlocksResult.getBlockTypes().stream().anyMatch(block -> block.toString().equalsIgnoreCase("SLIME_BLOCK"));
+        this.blockNearHead = nearbyBlocksResult.hasBlockAbove();
     }
+
+
+    public void handleTick() {
+        this.airTicks = inAir ? airTicks + 1 : 0;
+        this.iceTicks = onIce ? iceTicks + 1 : 0;
+        this.slimeTicks = onSlime ? slimeTicks + 1 : 0;
+        this.blockNearHeadTicks = blockNearHead ? blockNearHeadTicks + 1 : 0;
+
+        this.sinceIceTicks = onIce ? 0 : this.sinceIceTicks + 1;
+        this.sinceSlimeTicks = onSlime ? 0 : this.sinceSlimeTicks + 1;
+        this.sinceBlockNearHeadTicks = blockNearHead ? 0 : sinceBlockNearHeadTicks + 1;
+    }
+
 
     private void processPlayerData() {
 
         final Player p = profile.getPlayer();
 
-        NmsInstance nms = Anticheat.getInstance().getNmsManager().getNmsInstance();
+        NmsInstance nms = ZACPlugin.getInstance().getNmsManager().getNmsInstance();
 
         //Chunk
 
@@ -423,5 +445,64 @@ public class MovementData implements Data {
 
     public List<Material> getNearbyBlocks() {
         return nearbyBlocks;
+    }
+
+    public int getSlimeTicks() {return slimeTicks;}
+    public int getIceTicks() {return iceTicks;}
+    public int getSinceIceTicks() {return sinceIceTicks;}
+    public int getSinceSlimeTicks() {return sinceSlimeTicks;}
+
+    public boolean hasBlockNearHead() {return blockNearHead;}
+    public int getBlockNearHeadTicks() {return blockNearHeadTicks;}
+    public int getSinceBlockNearHeadTicks() {return sinceBlockNearHeadTicks;}
+
+    public int getAirTicks() {
+        return airTicks;
+    }
+
+    public boolean isNearVehicle() {
+        for (final Entity entity : getEntitiesWithinRadius(profile.getPlayer().getLocation(), 2)) {
+            if (entity instanceof Vehicle) return true;
+        }
+
+        return false;
+    }
+
+    public List<Entity> getEntitiesWithinRadius(final Location location, final double radius) {
+
+        final double expander = 16.0D;
+
+        final double x = location.getX();
+        final double z = location.getZ();
+
+        final int minX = (int) Math.floor((x - radius) / expander);
+        final int maxX = (int) Math.floor((x + radius) / expander);
+
+        final int minZ = (int) Math.floor((z - radius) / expander);
+        final int maxZ = (int) Math.floor((z + radius) / expander);
+
+        final World world = location.getWorld();
+
+        List<Entity> entities = new LinkedList<>();
+
+        for (int xVal = minX; xVal <= maxX; xVal++) {
+
+            for (int zVal = minZ; zVal <= maxZ; zVal++) {
+
+                if (!world.isChunkLoaded(xVal, zVal)) continue;
+
+                for (Entity entity : world.getChunkAt(xVal, zVal).getEntities()) {
+                    //We have to do this due to stupidness
+                    if (entity == null) continue;
+
+                    //Make sure the entity is within the radius specified
+                    if (entity.getLocation().distanceSquared(location) > radius * radius) continue;
+
+                    entities.add(entity);
+                }
+            }
+        }
+
+        return entities;
     }
 }
