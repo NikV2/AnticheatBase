@@ -159,6 +159,7 @@ public class Profile {
 
     public void handleTick(long currentTime) {
         //Handle the tick here
+        movementData.handleTick();
     }
 
     public TeleportData getTeleportData() {
