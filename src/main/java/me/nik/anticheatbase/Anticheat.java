@@ -84,7 +84,7 @@ public class Anticheat extends JavaPlugin {
                 new ProfileListener(this),
                 new ViolationListener(this),
                 new BukkitListener()
-        ).forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
+        ).forEach(listener -> Bukkit.getPluginManager().registerEvents(listener, this));
 
         //Load Commands
         getCommand("anticheat").setExecutor(new CommandManager(this));

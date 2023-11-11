@@ -2,25 +2,33 @@ package me.nik.anticheatbase.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.MinecraftKey;
 import io.netty.buffer.ByteBuf;
 import me.nik.anticheatbase.utils.ServerVersion;
 
 public class WrapperPlayClientCustomPayload extends PacketWrapper {
-    public static final PacketType TYPE = PacketType.Play.Client.CUSTOM_PAYLOAD;
 
-    public WrapperPlayClientCustomPayload() {
-        super(new PacketContainer(TYPE), TYPE);
-        handle.getModifier().writeDefaults();
-    }
+    public static final PacketType TYPE = PacketType.Play.Client.CUSTOM_PAYLOAD;
 
     public WrapperPlayClientCustomPayload(PacketContainer packet) {
         super(packet, TYPE);
     }
 
     public String getChannel() {
-        return ServerVersion.getVersion().isLowerThan(ServerVersion.v1_13_R1)
-                ? handle.getStrings().readSafely(0)
-                : handle.getMinecraftKeys().readSafely(0).getFullKey();
+
+        if (ServerVersion.getVersion().isLowerThan(ServerVersion.v1_13_R1)) {
+
+            return handle.getStrings().readSafely(0);
+
+        } else {
+
+            MinecraftKey key = handle.getMinecraftKeys().readSafely(0);
+
+            if (key != null) return key.getFullKey();
+        }
+
+        //Bad proxy configuration
+        return null;
     }
 
     /**

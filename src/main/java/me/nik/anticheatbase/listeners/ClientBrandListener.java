@@ -44,11 +44,13 @@ public class ClientBrandListener extends PacketAdapter {
 
         WrapperPlayClientCustomPayload payload = new WrapperPlayClientCustomPayload(e.getPacket());
 
+        String channel = payload.getChannel();
+
         /*
         Check if we received a payload from the brand channel
         Or if the player has set his brand recently.
          */
-        if (!payload.getChannel().toLowerCase().endsWith("brand") || this.cache.contains(uuid)) return;
+        if (channel == null || !channel.toLowerCase().endsWith("brand") || this.cache.contains(uuid)) return;
 
         String brand;
 

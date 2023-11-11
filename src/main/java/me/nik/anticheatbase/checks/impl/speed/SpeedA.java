@@ -15,7 +15,7 @@ public class SpeedA extends Check {
     public void handle(Packet packet) {
         if (!packet.isMovement() || profile.isExempt().movement()) return;
 
-        //Let's make an example check
+        //Let's make an example MEME check
 
         MovementData data = profile.getMovementData();
 

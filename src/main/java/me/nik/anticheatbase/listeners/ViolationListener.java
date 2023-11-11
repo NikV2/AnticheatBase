@@ -7,6 +7,7 @@ import me.nik.anticheatbase.files.Config;
 import me.nik.anticheatbase.managers.logs.PlayerLog;
 import me.nik.anticheatbase.managers.profile.Profile;
 import me.nik.anticheatbase.tasks.TickTask;
+import me.nik.anticheatbase.utils.ChatUtils;
 import me.nik.anticheatbase.utils.JsonBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -86,7 +87,8 @@ public class ViolationListener implements Listener {
 
                 if (!Config.Setting.CHECK_SETTINGS_ALERT_CONSOLE.getBoolean()) break alerts;
 
-                Bukkit.getConsoleSender().sendMessage(alertMessage);
+                //We're using bukkit's logger in order for the prefix to not show twice
+                Bukkit.getLogger().info(ChatUtils.stripColorCodes(alertMessage));
             }
         });
     }

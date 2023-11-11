@@ -106,16 +106,16 @@ public class NetworkListener extends PacketAdapter {
         final Packet packet = new Packet(e.getPacket(), System.currentTimeMillis());
 
         /*
-        Check for server crashers - exploit attempts
-        We have to do this on the netty thread in order to cancel the packet
-         */
+         Check for position crashers which could destroy our multithreading
+         We have to do this on the netty thread in order to cancel the packet
+        */
         final String crashAttempt = checkCrasher(packet);
 
         if (crashAttempt != null) {
 
             e.setCancelled(true);
 
-            ChatUtils.log("Kicking " + player.getName() + " for attempting to crash the server, Module: " + crashAttempt);
+            ChatUtils.log("Kicking " + player.getName() + " for sending an invalid position packet, Information: " + crashAttempt);
 
             //Kick the player on the main thread
             TaskUtils.task(() -> player.kickPlayer("Invalid Packet"));
@@ -174,10 +174,12 @@ public class NetworkListener extends PacketAdapter {
 
     private String checkCrasher(Packet packet) {
 
+        final Packet.Type type = packet.getType();
+
         double x = 0D, y = 0D, z = 0D;
         float yaw = 0F, pitch = 0F;
 
-        switch (packet.getType()) {
+        switch (type) {
 
             case POSITION:
 
@@ -226,8 +228,7 @@ public class NetworkListener extends PacketAdapter {
                 || !Float.isFinite(pitch);
 
         if (invalid || impossible) {
-
-            return "Invalid Position, X: " + x + " Y: " + y + " Z: " + z + " Yaw: " + yaw + " Pitch: " + pitch;
+            return "X: " + x + " Y: " + y + " Z: " + z + " Yaw: " + yaw + " Pitch: " + pitch;
         }
 
         return null;
