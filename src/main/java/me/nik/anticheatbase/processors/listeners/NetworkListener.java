@@ -91,8 +91,6 @@ public class NetworkListener extends PacketAdapter {
 
         this.plugin = plugin;
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(this);
-
         //Clear cache
         WHITELISTED_PACKETS.clear();
     }
