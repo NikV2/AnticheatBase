@@ -91,7 +91,7 @@ public class CheckHolder {
             /*
             Copy the original array and increment the size just like an ArrayList.
              */
-            this.checks = Arrays.copyOf(this.checks, this.checksSize + 1);
+            this.checks = Arrays.copyOf(this.checks, checks.length);
 
             /*
             Update the check.
