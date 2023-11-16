@@ -70,7 +70,7 @@ public class CheckHolder {
         /*
         Create a new check array to account for reloads.
          */
-        this.checks = new Check[0];
+        this.checks = new Check[checks.length];
 
         /*
         Reset the check size to account for reloads
@@ -87,11 +87,6 @@ public class CheckHolder {
             Or a check with the @Testing annotation is present or disabled.
              */
             if (this.profile != null && (!check.isEnabled() || isTesting(check))) continue;
-
-            /*
-            Copy the original array and increment the size just like an ArrayList.
-             */
-            this.checks = Arrays.copyOf(this.checks, this.checksSize + 1);
 
             /*
             Update the check.
