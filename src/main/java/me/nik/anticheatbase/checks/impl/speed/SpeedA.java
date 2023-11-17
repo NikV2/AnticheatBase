@@ -8,7 +8,7 @@ import me.nik.anticheatbase.processors.Packet;
 
 public class SpeedA extends Check {
     public SpeedA(Profile profile) {
-        super(profile, CheckType.SPEED, "A", "Checks for speed");
+        super(profile, CheckName.SPEED, CheckType.Hardcoded, "A", "Checks for speed");
     }
 
     @Override
