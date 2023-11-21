@@ -9,12 +9,12 @@ import me.nik.anticheatbase.processors.Packet;
  */
 public abstract class Check extends AbstractCheck {
 
-    public Check(Profile profile, CheckType check, String type, String description) {
-        super(profile, check, type, description);
+    public Check(Profile profile, CheckName name, CheckType type, String description) {
+        super(profile, name, type, description);
     }
 
-    public Check(Profile profile, CheckType check, String description) {
-        super(profile, check, "", description);
+    public Check(Profile profile, CheckName name, CheckType type, String letter, String description) {
+        super(profile, name, type, "", description);
     }
 
     public abstract void handle(Packet packet);
