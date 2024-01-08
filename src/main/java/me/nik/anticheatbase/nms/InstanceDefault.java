@@ -35,7 +35,7 @@ public class InstanceDefault implements NmsInstance {
     public boolean isWaterLogged(Block block) {
         return ServerVersion.getVersion().isHigherThanOrEquals(ServerVersion.v1_13_R1)
                 && (block.getBlockData() instanceof org.bukkit.block.data.Waterlogged
-                && ((org.bukkit.block.data.Waterlogged) block).isWaterlogged());
+                && ((org.bukkit.block.data.Waterlogged) block.getBlockData()).isWaterlogged());
     }
 
     @Override
