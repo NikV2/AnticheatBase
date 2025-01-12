@@ -89,6 +89,6 @@ public class ClientBrandListener extends PacketAdapter {
 
             profile.setClient(brand);
 
-        }, 2000L);
+        }, 40L);
     }
 }
